@@ -7,7 +7,7 @@ class Vector3D {
   }
 
   copy() {
-    return new Vector(this.x, this.y, this.z);
+    return new Vector3D(this.x, this.y, this.z);
   }
 
   norm() {
@@ -22,6 +22,11 @@ class Vector3D {
       this.y /= norm_;
       this.z /= norm_;
     }
+  }
+
+  forceNorm(newVal) {
+    this.normalize();
+    this.mult(newVal);
   }
 
   add(other) {
@@ -39,7 +44,7 @@ class Vector3D {
   mult(scal) {
     this.x *= scal;
     this.y *= scal;
-    this.Z *= scal;
+    this.z *= scal;
   }
 
   div(scal) {

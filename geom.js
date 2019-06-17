@@ -23,7 +23,6 @@ class Node {
     this.domEl.setAttribute('cy', position[1]);
     this.domTx.setAttributeNS(null, "x", position[0]);
     this.domTx.setAttributeNS(null, "y", position[1]);
-
   }
 }
 
@@ -47,7 +46,7 @@ class Edge {
   }
 }
 
-class Face {
+class Triangle {
   constructor(n1, n2, n3) {
     this.node1 = n1;
     this.node2 = n2;
@@ -61,6 +60,53 @@ class Face {
     this.dom.setAttribute('fill', this.color);
   }
 
+  refine(n) {
+    let ux = this.node2.position.copy()
+    ux.sub(this.node1.position);
+    ux.div(n);
+
+    let uy = this.node3.position.copy()
+    uy.sub(this.node1.position);
+    uy.div(n);
+
+    let newNodes = [];
+    let newFaces = [];
+
+    for (let i = 0; i <= n; i++) {
+      for (let j = 0; j <= n - i; j++) {
+        let newNode = new Node();
+        let dx = ux.copy();
+        dx.mult(i);
+        let dy = uy.copy();
+        dy.mult(j);
+        newNode.position = this.node1.position.copy();
+        newNode.position.add(dx);
+        newNode.position.add(dy);
+        newNodes.push(newNode);
+      }
+    }
+    let id = 0
+    for (let i = 0; i <= n - 1; i++) {
+      for (let j = 0; j < n - i; j++) {
+        let newFace = new Triangle(newNodes[id], newNodes[id + 1], newNodes[id + n + 1 - i]);
+        newFaces.push(newFace);
+        id += 1;
+      }
+      id += 1;
+    }
+    id = 0;
+    for (let i = 0; i <= n - 2; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        let newFace = new Triangle(newNodes[id + 1], newNodes[id + n + 2 - i], newNodes[id + n + 1 - i]);
+        newFaces.push(newFace);
+        id += 1;
+      }
+      id += 2;
+    }
+
+    return [newNodes, newFaces];
+  }
+
   show() {
     var pos1 = PROJ_FUNCTION(this.node1.position);
     var pos2 = PROJ_FUNCTION(this.node2.position);
@@ -70,7 +116,15 @@ class Face {
 
     this.dom.setAttributeNS(null, "points", list);
 
-    let color = ((pos1[2] + pos2[2] + pos3[2]) / 3) * 50 / 100 + 150;
+    let alpha = -0.25;
+    let beta = -0.85;
+    let gamma = 0.5;
+    let color = (
+        (pos1[0] + pos2[0] + pos3[0]) * (alpha) +
+        (pos1[1] + pos2[1] + pos3[1]) * (beta) +
+        (pos1[2] + pos2[2] + pos3[2] * (gamma))) /
+      (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) *
+      12 / 100 + 150;
 
     this.dom.setAttribute('fill', colorGenerator(color, color, color, 1));
 
@@ -90,6 +144,6 @@ class Face {
   }
 }
 
-EVAL_DISTANCE = function(face1, face2) {
-  return face1.isBefore(face2);
+EVAL_DISTANCE = function(triangle1, triangle2) {
+  return triangle1.isBefore(triangle2);
 }

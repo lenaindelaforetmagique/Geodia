@@ -10,22 +10,25 @@ colorGenerator = function(r = 0, g = 0, b = 0, alpha = 1) {
   return `rgba(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)}, ${alpha})`;
 }
 
+wait = function(timeMS) {
+  var d = new Date();
+  var d2 = null;
+  while (new Date() - d < timeMS) {
+
+  }
+}
+
 class Universe {
   constructor() {
     this.container = document.getElementById("container");
+    this.lb = document.getElementById("aleft");
+    this.rb = document.getElementById("aright");
+    this.ub = document.getElementById("aup");
+    this.db = document.getElementById("adown");
+
     this.dom = document.createElementNS(SVGNS, "svg");
 
-    this.nodesDom = document.createElementNS(SVGNS, 'g');
-    this.facesDom = document.createElementNS(SVGNS, 'g');
-    this.edgesDom = document.createElementNS(SVGNS, 'g');
-
-
     this.radius = 200;
-
-    this.dom.appendChild(this.facesDom);
-    this.dom.appendChild(this.edgesDom);
-    this.dom.appendChild(this.nodesDom);
-
     this.container.appendChild(this.dom);
 
     this.viewBox = new ViewBox(this.dom, this.radius);
@@ -34,8 +37,11 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
+    this.idPolyedre = 0;
+    this.refinement = 1;
+
+    this.init();
     this.addEvents();
-    this.icosaedre();
   }
 
   init() {
@@ -43,12 +49,43 @@ class Universe {
     while (this.dom.firstChild != null) {
       this.dom.removeChild(this.dom.firstChild);
     }
-    this.pointsDom = document.createElementNS(SVGNS, 'g');
-    this.dom.appendChild(this.pointsDom);
+
+    this.nodesDom = document.createElementNS(SVGNS, 'g');
+    this.facesDom = document.createElementNS(SVGNS, 'g');
+    this.edgesDom = document.createElementNS(SVGNS, 'g');
+
+    this.dom.appendChild(this.facesDom);
+    this.dom.appendChild(this.edgesDom);
+    this.dom.appendChild(this.nodesDom);
 
     this.nodes = [];
     this.edges = [];
     this.faces = [];
+
+    while (this.idPolyedre < 0) {
+      this.idPolyedre += 3;
+    }
+    switch (this.idPolyedre % 3) {
+      case 0:
+        this.icosaedre();
+        break;
+      case 1:
+        this.octaedre();
+        break;
+      case 2:
+        this.tetraedre();
+        break;
+
+      default:
+        // console.log(e);
+        break;
+    }
+
+    if (this.refinement > 1) {
+      this.refine(this.refinement);
+    } else {
+      this.refinement = 1;
+    }
   }
 
   addNode(x_ = 0, y_ = 0, z_ = 0) {
@@ -58,19 +95,64 @@ class Universe {
     newNode.show();
   }
 
-  addEdge(id1, id2) {
-    let newEdge = new Edge(this.nodes[id1], this.nodes[id2]);
+  addEdge(id1, id2, offset = 0) {
+    let newEdge = new Edge(this.nodes[id1 + offset], this.nodes[id2 + offset]);
     this.edges.push(newEdge);
     this.edgesDom.appendChild(newEdge.dom);
     newEdge.show();
   }
 
-  addFace(id1, id2, id3) {
-    let newFace = new Face(this.nodes[id1], this.nodes[id2], this.nodes[id3]);
-    this.faces.push(newFace);
+  addTriangle(id1, id2, id3, offset = 0) {
+    let newTriangle = new Triangle(this.nodes[id1 + offset], this.nodes[id2 + offset], this.nodes[id3 + offset]);
+    this.faces.push(newTriangle);
+  }
+
+  tetraedre() {
+    let fact = this.radius / 3;
+    // Nodes (12)
+    let offset = this.nodes.length;
+    this.addNode(Math.sqrt(6) * fact, -Math.sqrt(2) * fact, -1 * fact);
+    this.addNode(-Math.sqrt(6) * fact, -Math.sqrt(2) * fact, -1 * fact);
+    this.addNode(0, 2 * Math.sqrt(2) * fact, -1 * fact);
+    this.addNode(0, 0, 3 * fact);
+
+    // Edges (30)
+
+    // Triangles (20)
+    this.addTriangle(0, 1, 2, offset);
+    this.addTriangle(0, 2, 3, offset);
+    this.addTriangle(0, 3, 1, offset);
+    this.addTriangle(1, 2, 3, offset);
+    this.updateFaces();
+  }
+
+  octaedre() {
+    let fact = this.radius;
+    let offset = this.nodes.length;
+    // Nodes (12)
+    this.addNode(1 * fact, 0, 0);
+    this.addNode(-1 * fact, 0, 0);
+    this.addNode(0, 1 * fact, 0);
+    this.addNode(0, -1 * fact, 0);
+    this.addNode(0, 0, 1 * fact);
+    this.addNode(0, 0, -1 * fact);
+
+    // Edges (30)
+
+    // Faces (8)
+    this.addTriangle(0, 2, 5, offset);
+    this.addTriangle(0, 5, 3, offset);
+    this.addTriangle(0, 3, 4, offset);
+    this.addTriangle(0, 4, 2, offset);
+    this.addTriangle(1, 2, 4, offset);
+    this.addTriangle(1, 4, 3, offset);
+    this.addTriangle(1, 3, 5, offset);
+    this.addTriangle(1, 5, 2, offset);
+    this.updateFaces();
   }
 
   icosaedre() {
+    let offset = this.nodes.length;
     let phi = (1 + Math.sqrt(5)) / 2;
     let one = 1;
     let fact = this.radius / Math.sqrt(1 + phi ** 2);
@@ -91,60 +173,91 @@ class Universe {
     this.addNode(0, -phi, -one);
 
     // Edges (30)
-    // this.addEdge(0, 1);
-    // this.addEdge(0, 4);
-    // this.addEdge(0, 8);
-    // this.addEdge(0, 9);
-    // this.addEdge(0, 6);
-    // this.addEdge(1, 4);
-    // this.addEdge(1, 6);
-    // this.addEdge(1, 10);
-    // this.addEdge(1, 11);
-    // this.addEdge(2, 3);
-    // this.addEdge(2, 5);
-    // this.addEdge(2, 7);
-    // this.addEdge(2, 8);
-    // this.addEdge(2, 9);
-    // this.addEdge(3, 5);
-    // this.addEdge(3, 7);
-    // this.addEdge(3, 10);
-    // this.addEdge(3, 11);
-    // this.addEdge(4, 8);
-    // this.addEdge(4, 10);
-    // this.addEdge(4, 5);
-    // this.addEdge(5, 8);
-    // this.addEdge(5, 10);
-    // this.addEdge(6, 7);
-    // this.addEdge(6, 9);
-    // this.addEdge(6, 11);
-    // this.addEdge(7, 9);
-    // this.addEdge(7, 11);
-    // this.addEdge(8, 9);
-    // this.addEdge(10, 11);
+    // this.addEdge(0, 1, offset);
+    // this.addEdge(0, 4, offset);
+    // this.addEdge(0, 8, offset);
+    // this.addEdge(0, 9, offset);
+    // this.addEdge(0, 6, offset);
+    // this.addEdge(1, 4, offset);
+    // this.addEdge(1, 6, offset);
+    // this.addEdge(1, 10, offset);
+    // this.addEdge(1, 11, offset);
+    // this.addEdge(2, 3, offset);
+    // this.addEdge(2, 5, offset);
+    // this.addEdge(2, 7, offset);
+    // this.addEdge(2, 8, offset);
+    // this.addEdge(2, 9, offset);
+    // this.addEdge(3, 5, offset);
+    // this.addEdge(3, 7, offset);
+    // this.addEdge(3, 10, offset);
+    // this.addEdge(3, 11, offset);
+    // this.addEdge(4, 8, offset);
+    // this.addEdge(4, 10, offset);
+    // this.addEdge(4, 5, offset);
+    // this.addEdge(5, 8, offset);
+    // this.addEdge(5, 10, offset);
+    // this.addEdge(6, 7, offset);
+    // this.addEdge(6, 9, offset);
+    // this.addEdge(6, 11, offset);
+    // this.addEdge(7, 9, offset);
+    // this.addEdge(7, 11, offset);
+    // this.addEdge(8, 9, offset);
+    // this.addEdge(10, 11, offset);
 
     // Faces (20)
-    this.addFace(0, 1, 4);
-    this.addFace(0, 4, 8);
-    this.addFace(0, 8, 9);
-    this.addFace(0, 9, 6);
-    this.addFace(0, 6, 1);
-    this.addFace(1, 6, 11);
-    this.addFace(1, 11, 10);
-    this.addFace(1, 10, 4);
-    this.addFace(2, 3, 7);
-    this.addFace(2, 7, 9);
-    this.addFace(2, 9, 8);
-    this.addFace(2, 8, 5);
-    this.addFace(2, 5, 3);
-    this.addFace(3, 5, 10);
-    this.addFace(3, 10, 11);
-    this.addFace(3, 11, 7);
-    this.addFace(4, 10, 5);
-    this.addFace(4, 5, 8);
-    this.addFace(6, 9, 7);
-    this.addFace(6, 7, 11);
+    this.addTriangle(0, 1, 4, offset);
+    this.addTriangle(0, 4, 8, offset);
+    this.addTriangle(0, 8, 9, offset);
+    this.addTriangle(0, 9, 6, offset);
+    this.addTriangle(0, 6, 1, offset);
+    this.addTriangle(1, 6, 11, offset);
+    this.addTriangle(1, 11, 10, offset);
+    this.addTriangle(1, 10, 4, offset);
+    this.addTriangle(2, 3, 7, offset);
+    this.addTriangle(2, 7, 9, offset);
+    this.addTriangle(2, 9, 8, offset);
+    this.addTriangle(2, 8, 5, offset);
+    this.addTriangle(2, 5, 3, offset);
+    this.addTriangle(3, 5, 10, offset);
+    this.addTriangle(3, 10, 11, offset);
+    this.addTriangle(3, 11, 7, offset);
+    this.addTriangle(4, 10, 5, offset);
+    this.addTriangle(4, 5, 8, offset);
+    this.addTriangle(6, 9, 7, offset);
+    this.addTriangle(6, 7, 11, offset);
     this.updateFaces();
   }
+
+  refine(n) {
+    let newNodes = [];
+    let newFaces = [];
+    for (let face of this.faces) {
+      // let face = this.faces.last();
+      let res = face.refine(n);
+      newNodes = newNodes.concat(res[0]);
+      newFaces = newFaces.concat(res[1]);
+    }
+
+    for (let newNode of newNodes) {
+      newNode.position.forceNorm(this.radius);
+      this.nodes.push(newNode);
+      this.nodesDom.appendChild(newNode.dom);
+      newNode.show();
+    }
+
+    this.faces = [];
+    for (let newFace of newFaces) {
+      this.faces.push(newFace);
+      this.facesDom.appendChild(newFace.dom);
+      newFace.show();
+    }
+    this.updateFaces();
+
+  }
+
+
+
+
 
   updateFaces() {
     this.faces.sort(EVAL_DISTANCE);
@@ -176,20 +289,28 @@ class Universe {
       // console.log(e.key);
       switch (e.key.toUpperCase()) {
         case "ARROWLEFT":
-          PROJ_CHANGE_PHI(1);
-          thiz.update();
+          thiz.idPolyedre += 1;
+          thiz.init();
+          // PROJ_CHANGE_PHI(1);
+          // thiz.update();
           break;
         case "ARROWRIGHT":
-          PROJ_CHANGE_PHI(-1);
-          thiz.update();
+          thiz.idPolyedre -= 1;
+          thiz.init();
+          // PROJ_CHANGE_PHI(-1);
+          // thiz.update();
           break;
         case "ARROWUP":
-          PROJ_CHANGE_LAMBDA(1);
-          thiz.update();
+          thiz.refinement += 1;
+          thiz.init();
+          // PROJ_CHANGE_LAMBDA(1);
+          // thiz.update();
           break;
         case "ARROWDOWN":
-          PROJ_CHANGE_LAMBDA(-1);
-          thiz.update();
+          thiz.refinement -= 1;
+          thiz.init();
+          // PROJ_CHANGE_LAMBDA(-1);
+          // thiz.update();
           break;
         default:
           // console.log(e);
@@ -235,6 +356,26 @@ class Universe {
       thiz.viewBox.scale(e.clientX, e.clientY, k);
     }, false);
 
+    // BUTTONs Events
+    this.lb.onclick = function() {
+      thiz.idPolyedre += 1;
+      thiz.init();
+    };
+
+    this.rb.onclick = function() {
+      thiz.idPolyedre -= 1;
+      thiz.init();
+    };
+
+    this.db.onclick = function() {
+      thiz.refinement -= 1;
+      thiz.init();
+    };
+
+    this.ub.onclick = function() {
+      thiz.refinement += 1;
+      thiz.init();
+    };
 
     // TOUCH events
     this.prevX = null;
@@ -347,4 +488,6 @@ class ViewBox {
     this.yMin += dy / domRect.height * this.height;
     this.set();
   }
+
+
 }

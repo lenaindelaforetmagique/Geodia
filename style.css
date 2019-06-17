@@ -13,6 +13,31 @@ html, body {
   overflow: hidden;
 }
 
+#arrows img {
+  width: 5%;
+  position: absolute;
+}
+
+#aleft {
+  top: 50%;
+  left: 0%;
+}
+
+#aright {
+  top: 50%;
+  left: 95%;
+}
+
+#aup {
+  top: 2%;
+  left: 50%;
+}
+
+#adown {
+  top: 2%;
+  left: 40%;
+}
+
 svg {
   margin: 0;
   padding: 0;
