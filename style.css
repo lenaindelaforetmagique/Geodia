@@ -14,7 +14,7 @@ html, body {
 }
 
 #arrows img {
-  width: 5%;
+  width: 10%;
   position: absolute;
 }
 
@@ -25,17 +25,17 @@ html, body {
 
 #aright {
   top: 50%;
-  left: 95%;
+  left: 90%;
 }
 
 #aup {
   top: 2%;
-  left: 50%;
+  left: 55%;
 }
 
 #adown {
   top: 2%;
-  left: 40%;
+  left: 35%;
 }
 
 svg {
