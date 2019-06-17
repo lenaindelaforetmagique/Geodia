@@ -235,27 +235,40 @@ class Universe {
       thiz.viewBox.scale(e.clientX, e.clientY, k);
     }, false);
 
-    //
-    // // TOUCH events
-    // this.container.addEventListener("touchstart", function(e) {
-    //   e.preventDefault();
-    // }, false);
-    //
-    // this.container.addEventListener("touchmove", function(e) {
-    //   e.preventDefault();
-    // }, false);
-    //
-    // this.container.addEventListener("touchend", function(e) {
-    //   e.preventDefault();
-    // }, false);
-    //
-    // this.container.addEventListener("touchcancel", function(e) {
-    //   e.preventDefault();
-    // }, false);
-    //
-    // this.container.addEventListener("touchleave", function(e) {
-    //   e.preventDefault();
-    // }, false);
+
+    // TOUCH events
+    this.prevX = null;
+    this.prevY = null;
+
+    this.container.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+    }, false);
+
+    this.container.addEventListener("touchmove", function(e) {
+      e.preventDefault();
+      if (thiz.prevX != null) {
+        PROJ_CHANGE_PHI(-(e.changedTouches[0].clientX - thiz.prevX) / 10);
+        PROJ_CHANGE_LAMBDA((e.changedTouches[0].clientY - thiz.prevY) / 10);
+        thiz.update();
+      }
+      thiz.prevX = e.changedTouches[0].clientX;
+      thiz.prevY = e.changedTouches[0].clientY;
+
+    }, false);
+
+    this.container.addEventListener("touchend", function(e) {
+      e.preventDefault();
+      thiz.prevX = null;
+      thiz.prevY = null;
+    }, false);
+
+    this.container.addEventListener("touchcancel", function(e) {
+      e.preventDefault();
+    }, false);
+
+    this.container.addEventListener("touchleave", function(e) {
+      e.preventDefault();
+    }, false);
 
     // OTHER events
     window.onresize = function(e) {
