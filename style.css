@@ -14,8 +14,9 @@ html, body {
 }
 
 #arrows img {
-  width: 10%;
+  width: 50px;
   position: absolute;
+  cursor: pointer;
 }
 
 #aleft {
@@ -25,7 +26,7 @@ html, body {
 
 #aright {
   top: 50%;
-  left: 90%;
+  right: 0;
 }
 
 #aup {
@@ -35,7 +36,7 @@ html, body {
 
 #adown {
   top: 2%;
-  left: 35%;
+  right: 55%;
 }
 
 svg {
@@ -117,4 +118,31 @@ a:hover {
 
 a:active {
   color: rgba(0, 0, 0, 0.7);
+}
+
+@media screen and (max-device-width: 600px) {
+  #arrows img {
+    width: 10%;
+    position: absolute;
+  }
+
+  #aleft {
+    top: 50%;
+    left: 0%;
+  }
+
+  #aright {
+    top: 50%;
+    right: 0%;
+  }
+
+  #aup {
+    top: 2%;
+    right: 45%;
+  }
+
+  #adown {
+    top: 2%;
+    left: 45%;
+  }
 }
