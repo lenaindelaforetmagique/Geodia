@@ -27,6 +27,7 @@ class Universe {
     this.db = document.getElementById("adown");
 
     this.dom = document.createElementNS(SVGNS, "svg");
+    this.textBlock = new TextBlock();
 
     this.radius = 200;
     this.container.appendChild(this.dom);
@@ -489,5 +490,41 @@ class ViewBox {
     this.set();
   }
 
+
+}
+
+
+class TextBlock {
+  constructor() {
+    this.container = document.getElementById("container");
+    this.dom = this.dom = document.createElementNS(SVGNS, "svg");
+    this.dom.setAttributeNS(null, "class", "legend");
+    this.container.appendChild(this.dom);
+
+    this.text = document.createElementNS(SVGNS, "text");
+    this.dom.appendChild(this.text);
+    this.text.setAttributeNS(null, "x", 0);
+    this.text.setAttributeNS(null, "y", 30);
+    this.text.setAttributeNS(null, "fill", "rgba(0,0,0,0.7)");
+
+    this.title = document.createElementNS(SVGNS, "tspan");
+    this.text.appendChild(this.title);
+    this.title.setAttributeNS(null, "font-size", "30px");
+
+
+    this.btn1 = document.createElementNS(SVGNS, "text");
+    this.btn1.setAttributeNS(null, "fill", "rgba(0,0,0,0.7)");
+    this.dom.appendChild(this.btn1);
+
+    this.btn1.setAttributeNS(null, "font-size", "12px");
+    this.btn1.setAttributeNS(null, "x", 0);
+    this.btn1.setAttributeNS(null, "y", 60);
+
+    this.title.textContent = "Geodia";
+    this.btn1.textContent = "Générez des domes géodésiques en cliquant sur les flèches";
+
+
+
+  }
 
 }

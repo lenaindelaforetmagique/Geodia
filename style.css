@@ -49,18 +49,13 @@ svg {
   width: 100%;
 }
 
-text {
-  x: 20px;
-  font-size: 20px;
-  fill: rgba(0, 0, 0, 0.7);
-}
-
-text.title {
-  font-size: 30px;
-}
-
-text.button {
-  cursor: pointer;
+svg, legend {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  /* font-size: 2px; */
 }
 
 polyline {
