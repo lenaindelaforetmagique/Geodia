@@ -1,0 +1,95 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+#container {
+  margin: 0;
+  padding: 0;
+  background: #EEEEEE;
+  height: 100%;
+  overflow: hidden;
+}
+
+svg {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+text {
+  x: 20px;
+  font-size: 20px;
+  fill: rgba(0, 0, 0, 0.7);
+}
+
+text.title {
+  font-size: 30px;
+}
+
+text.button {
+  cursor: pointer;
+}
+
+polyline {
+  fill: none;
+  stroke: red;
+  stroke-width: 1;
+}
+
+polygon {
+  /* fill: rgba(0, 0, 0, 0.1); */
+  stroke: black;
+  stroke-width: 0.1;
+}
+
+polygon.lev1 {
+  fill: rgba(173, 216, 230, 1);
+  stroke-width: 0;
+}
+
+.button {
+  cursor: pointer;
+}
+
+#container {
+  margin: 0;
+  padding: 0;
+  background: #EEEEEE;
+  height: 100%;
+  overflow: hidden;
+}
+
+footer {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  font-size: 12px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+a:visited {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+a:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+a:active {
+  color: rgba(0, 0, 0, 0.7);
+}
