@@ -521,10 +521,7 @@ class TextBlock {
     this.btn1.setAttributeNS(null, "y", 60);
 
     this.title.textContent = "Geodia";
-    this.btn1.textContent = "Générez des domes géodésiques en cliquant sur les flèches";
-
-
-
+    this.btn1.textContent = "Générateur de domes géodésiques";
   }
 
 }

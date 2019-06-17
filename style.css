@@ -133,11 +133,11 @@ a:active {
 
   #aup {
     top: 2%;
-    right: 45%;
+    left: 55%;
   }
 
   #adown {
     top: 2%;
-    left: 45%;
+    right: 55%;
   }
 }
