@@ -38,7 +38,7 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    this.idPolyedre = 0;
+    this.idPolyedre = 3;
     this.refinement = 1;
 
     this.init();
@@ -66,20 +66,25 @@ class Universe {
     var legend = "";
 
     while (this.idPolyedre < 0) {
-      this.idPolyedre += 3;
+      this.idPolyedre += 4;
     }
-    switch (this.idPolyedre % 3) {
+    // console.log(this.idPolyedre);
+    switch (this.idPolyedre % 4) {
       case 0:
-        this.icosaedre();
-        legend = "Icosaèdre";
+        this.tetraedre();
+        legend = "Tétraèdre";
         break;
       case 1:
+        this.hexaedre();
+        legend = "Hexaèdre";
+        break;
+      case 2:
         this.octaedre();
         legend = "Octaèdre";
         break;
-      case 2:
-        this.tetraedre();
-        legend = "Tétraèdre";
+      case 3:
+        this.icosaedre();
+        legend = "Icosaèdre";
         break;
 
       default:
@@ -116,6 +121,16 @@ class Universe {
     this.faces.push(newTriangle);
   }
 
+  addQuadrangle(id1, id2, id3, id4, offset = 0) {
+    let newQuadrangle = new Quadrangle(
+      this.nodes[id1 + offset],
+      this.nodes[id2 + offset],
+      this.nodes[id3 + offset],
+      this.nodes[id4 + offset]
+    );
+    this.faces.push(newQuadrangle);
+  }
+
   tetraedre() {
     let fact = this.radius / 3;
     // Nodes (12)
@@ -132,6 +147,32 @@ class Universe {
     this.addTriangle(0, 2, 3, offset);
     this.addTriangle(0, 3, 1, offset);
     this.addTriangle(1, 2, 3, offset);
+    this.updateFaces();
+  }
+
+  hexaedre() {
+    let one = this.radius / Math.sqrt(3);
+    // Nodes (12)
+    let offset = this.nodes.length;
+    this.addNode(-one, -one, -one);
+    this.addNode(-one, one, -one);
+    this.addNode(one, -one, -one);
+    this.addNode(one, one, -one);
+    this.addNode(-one, -one, one);
+    this.addNode(-one, one, one);
+    this.addNode(one, -one, one);
+    this.addNode(one, one, one);
+
+
+    // Edges (30)
+
+    // Triangles (20)
+    this.addQuadrangle(0, 1, 3, 2, offset);
+    this.addQuadrangle(0, 4, 5, 1, offset);
+    this.addQuadrangle(0, 2, 6, 4, offset);
+    this.addQuadrangle(1, 5, 7, 3, offset);
+    this.addQuadrangle(2, 3, 7, 6, offset);
+    this.addQuadrangle(4, 6, 7, 5, offset);
     this.updateFaces();
   }
 
@@ -265,9 +306,6 @@ class Universe {
   }
 
 
-
-
-
   updateFaces() {
     this.faces.sort(EVAL_DISTANCE);
     while (this.facesDom.firstChild != null) {
@@ -298,28 +336,20 @@ class Universe {
       // console.log(e.key);
       switch (e.key.toUpperCase()) {
         case "ARROWLEFT":
-          thiz.idPolyedre += 1;
-          thiz.init();
-          // PROJ_CHANGE_PHI(1);
-          // thiz.update();
-          break;
-        case "ARROWRIGHT":
           thiz.idPolyedre -= 1;
           thiz.init();
-          // PROJ_CHANGE_PHI(-1);
-          // thiz.update();
+          break;
+        case "ARROWRIGHT":
+          thiz.idPolyedre += 1;
+          thiz.init();
           break;
         case "ARROWUP":
           thiz.refinement += 1;
           thiz.init();
-          // PROJ_CHANGE_LAMBDA(1);
-          // thiz.update();
           break;
         case "ARROWDOWN":
           thiz.refinement -= 1;
           thiz.init();
-          // PROJ_CHANGE_LAMBDA(-1);
-          // thiz.update();
           break;
         default:
           // console.log(e);
@@ -367,12 +397,12 @@ class Universe {
 
     // BUTTONs Events
     this.lb.onclick = function() {
-      thiz.idPolyedre += 1;
+      thiz.idPolyedre -= 1;
       thiz.init();
     };
 
     this.rb.onclick = function() {
-      thiz.idPolyedre -= 1;
+      thiz.idPolyedre += 1;
       thiz.init();
     };
 
