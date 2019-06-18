@@ -25,9 +25,9 @@ class Universe {
     this.rb = document.getElementById("aright");
     this.ub = document.getElementById("aup");
     this.db = document.getElementById("adown");
+    this.legend = document.getElementById("legend");
 
     this.dom = document.createElementNS(SVGNS, "svg");
-    this.textBlock = new TextBlock();
 
     this.radius = 200;
     this.container.appendChild(this.dom);
@@ -63,18 +63,23 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
+    var legend = "";
+
     while (this.idPolyedre < 0) {
       this.idPolyedre += 3;
     }
     switch (this.idPolyedre % 3) {
       case 0:
         this.icosaedre();
+        legend = "Icosaèdre";
         break;
       case 1:
         this.octaedre();
+        legend = "Octaèdre";
         break;
       case 2:
         this.tetraedre();
+        legend = "Tétraèdre";
         break;
 
       default:
@@ -87,6 +92,9 @@ class Universe {
     } else {
       this.refinement = 1;
     }
+    legend += " - ordre " + this.refinement;
+
+    this.legend.innerText = legend;
   }
 
   addNode(x_ = 0, y_ = 0, z_ = 0) {
@@ -490,38 +498,5 @@ class ViewBox {
     this.set();
   }
 
-
-}
-
-
-class TextBlock {
-  constructor() {
-    this.container = document.getElementById("container");
-    this.dom = this.dom = document.createElementNS(SVGNS, "svg");
-    this.dom.setAttributeNS(null, "class", "legend");
-    this.container.appendChild(this.dom);
-
-    this.text = document.createElementNS(SVGNS, "text");
-    this.dom.appendChild(this.text);
-    this.text.setAttributeNS(null, "x", 0);
-    this.text.setAttributeNS(null, "y", 30);
-    this.text.setAttributeNS(null, "fill", "rgba(0,0,0,0.7)");
-
-    this.title = document.createElementNS(SVGNS, "tspan");
-    this.text.appendChild(this.title);
-    this.title.setAttributeNS(null, "font-size", "30px");
-
-
-    this.btn1 = document.createElementNS(SVGNS, "text");
-    this.btn1.setAttributeNS(null, "fill", "rgba(0,0,0,0.7)");
-    this.dom.appendChild(this.btn1);
-
-    this.btn1.setAttributeNS(null, "font-size", "12px");
-    this.btn1.setAttributeNS(null, "x", 0);
-    this.btn1.setAttributeNS(null, "y", 60);
-
-    this.title.textContent = "Geodia";
-    this.btn1.textContent = "Générateur de domes géodésiques";
-  }
 
 }

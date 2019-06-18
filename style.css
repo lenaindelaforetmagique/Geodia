@@ -2,89 +2,31 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Ubuntu Mono', monospace;
-}
-
-#container {
-  margin: 0;
-  padding: 0;
-  background: #EEEEEE;
-  height: 100%;
   overflow: hidden;
+  font-family: 'Overlock', monospace;
+  /* background-color: #ADD8E6; */
+  background-color: #EEEEEE;
+  color: rgba(0, 0, 0, 0.7);
 }
 
-#arrows img {
-  width: 50px;
-  position: absolute;
-  cursor: pointer;
-}
-
-#aleft {
-  top: 50%;
-  left: 0%;
-}
-
-#aright {
-  top: 50%;
-  right: 0;
-}
-
-#aup {
-  top: 2%;
-  left: 55%;
-}
-
-#adown {
-  top: 2%;
-  right: 55%;
-}
-
-svg {
+header {
   margin: 0;
   padding: 0;
   position: absolute;
-  left: 0px;
   top: 0px;
-  height: 100%;
-  width: 100%;
+  left: 5px;
+  font-size: 80%;
 }
 
-svg, legend {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  height: 100%;
-  width: 100%;
-  /* font-size: 2px; */
+header p {
+  font-size: 100%;
+  font-style: italic;
+  line-height: 10%;
 }
 
-polyline {
-  fill: none;
-  stroke: red;
-  stroke-width: 1;
-}
-
-polygon {
-  /* fill: rgba(0, 0, 0, 0.1); */
-  stroke: black;
-  stroke-width: 0.1;
-}
-
-polygon.lev1 {
-  fill: rgba(173, 216, 230, 1);
-  stroke-width: 0;
-}
-
-.button {
-  cursor: pointer;
-}
-
-#container {
-  margin: 0;
-  padding: 0;
-  background: #EEEEEE;
-  height: 100%;
-  overflow: hidden;
+#legend {
+  font-weight: bold;
+  font-size: 110%;
 }
 
 footer {
@@ -115,6 +57,53 @@ a:active {
   color: rgba(0, 0, 0, 0.7);
 }
 
+#container {
+  height: 100%;
+}
+
+#arrows img {
+  width: 60px;
+  position: absolute;
+  cursor: pointer;
+}
+
+#aleft {
+  top: 50%;
+  left: 0%;
+}
+
+#aright {
+  top: 50%;
+  right: 0;
+}
+
+#aup {
+  top: 2%;
+  right: 30px;
+}
+
+#adown {
+  top: 2%;
+  right: 120px;
+}
+
+svg {
+  height: 100%;
+  width: 100%;
+}
+
+polyline {
+  fill: none;
+  stroke: red;
+  stroke-width: 1;
+}
+
+polygon {
+  /* fill: rgba(0, 0, 0, 0.1); */
+  stroke: black;
+  stroke-width: 0.1;
+}
+
 @media screen and (max-device-width: 600px) {
   #arrows img {
     width: 10%;
@@ -133,11 +122,11 @@ a:active {
 
   #aup {
     top: 2%;
-    left: 55%;
+    right: 5%;
   }
 
   #adown {
     top: 2%;
-    right: 55%;
+    right: 20%;
   }
 }
