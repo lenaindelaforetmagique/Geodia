@@ -30,6 +30,8 @@ PROJ_UPDATE_VECTORS = function() {
 
   // PROJ_UY = PROJ_UZ.crossProduct(PROJ_UX);
   PROJ_UY = PROJ_UX.crossProduct(PROJ_UZ);
+
+  // console.log(PROJ_LAMBDA, PROJ_PHI);
 }
 
 
@@ -45,6 +47,6 @@ PROJ_CHANGE_LAMBDA = function(intensity = 0) {
 }
 
 // =============================================================================
-PROJ_LAMBDA = 2;
-PROJ_PHI = 15;
+PROJ_LAMBDA = 10;
+PROJ_PHI = 190;
 PROJ_UPDATE_VECTORS();

@@ -38,7 +38,7 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    this.idPolyedre = 3;
+    this.idPolyedre = 0;
     this.refinement = 1;
 
     this.init();
