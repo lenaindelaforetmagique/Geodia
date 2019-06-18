@@ -217,7 +217,7 @@ class Universe {
   }
 
   dodecaedre() {
-    let fact = this.radius / 2;
+    let fact = this.radius / Math.sqrt(3);
     let offset = this.nodes.length;
 
     let one = fact * 1;
