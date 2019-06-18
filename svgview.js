@@ -66,10 +66,10 @@ class Universe {
     var legend = "";
 
     while (this.idPolyedre < 0) {
-      this.idPolyedre += 4;
+      this.idPolyedre += 5;
     }
     // console.log(this.idPolyedre);
-    switch (this.idPolyedre % 4) {
+    switch (this.idPolyedre % 5) {
       case 0:
         this.tetraedre();
         legend = "Tétraèdre";
@@ -83,6 +83,10 @@ class Universe {
         legend = "Octaèdre";
         break;
       case 3:
+        this.dodecaedre();
+        legend = "Dodecaèdre";
+        break;
+      case 4:
         this.icosaedre();
         legend = "Icosaèdre";
         break;
@@ -129,6 +133,17 @@ class Universe {
       this.nodes[id4 + offset]
     );
     this.faces.push(newQuadrangle);
+  }
+
+  addQuintangle(id1, id2, id3, id4, id5, offset = 0) {
+    let newQuintangle = new Quintangle(
+      this.nodes[id1 + offset],
+      this.nodes[id2 + offset],
+      this.nodes[id3 + offset],
+      this.nodes[id4 + offset],
+      this.nodes[id5 + offset]
+    );
+    this.faces.push(newQuintangle);
   }
 
   tetraedre() {
@@ -200,6 +215,56 @@ class Universe {
     this.addTriangle(1, 5, 2, offset);
     this.updateFaces();
   }
+
+  dodecaedre() {
+    let fact = this.radius / 2;
+    let offset = this.nodes.length;
+
+    let one = fact * 1;
+    let phi = fact * (1 + Math.sqrt(5)) / 2;
+    let one_phi = fact * 1 / ((1 + Math.sqrt(5)) / 2);
+    // Nodes (12)
+    this.addNode(0, one_phi, phi);
+    this.addNode(0, one_phi, -phi);
+    this.addNode(0, -one_phi, phi);
+    this.addNode(0, -one_phi, -phi);
+    this.addNode(one_phi, phi, 0);
+    this.addNode(one_phi, -phi, 0);
+    this.addNode(-one_phi, phi, 0);
+    this.addNode(-one_phi, -phi, 0);
+    this.addNode(phi, 0, one_phi);
+    this.addNode(phi, 0, -one_phi);
+    this.addNode(-phi, 0, one_phi);
+    this.addNode(-phi, 0, -one_phi);
+    this.addNode(one, one, one);
+    this.addNode(one, one, -one);
+    this.addNode(one, -one, one);
+    this.addNode(one, -one, -one);
+    this.addNode(-one, one, one);
+    this.addNode(-one, one, -one);
+    this.addNode(-one, -one, one);
+    this.addNode(-one, -one, -one);
+
+
+    // Edges (30)
+
+    // Faces (8)
+    this.addQuintangle(0, 2, 14, 8, 12, offset);
+    this.addQuintangle(0, 12, 4, 6, 16, offset);
+    this.addQuintangle(0, 16, 10, 18, 2, offset);
+    this.addQuintangle(1, 3, 15, 9, 13, offset);
+    this.addQuintangle(1, 13, 4, 6, 17, offset);
+    this.addQuintangle(1, 17, 11, 19, 3, offset);
+    this.addQuintangle(2, 14, 5, 7, 18, offset);
+    this.addQuintangle(3, 15, 5, 7, 19, offset);
+    this.addQuintangle(4, 12, 8, 9, 13, offset);
+    this.addQuintangle(5, 14, 8, 9, 15, offset);
+    this.addQuintangle(6, 16, 10, 11, 17, offset);
+    this.addQuintangle(7, 18, 10, 11, 19, offset);
+
+    this.updateFaces();
+  }
+
 
   icosaedre() {
     let offset = this.nodes.length;

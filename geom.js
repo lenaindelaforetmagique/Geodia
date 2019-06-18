@@ -46,18 +46,63 @@ class Edge {
   }
 }
 
-class Triangle {
+
+class Polygon {
+  constructor(nodesList_) {
+    this.nodes = nodesList_;
+
+    this.dom = document.createElementNS(SVGNS, 'polygon');
+    // this.dom.setAttribute('fill', this.color);
+  }
+
+  show() {
+    let list = "";
+    for (let node of this.nodes) {
+      let pos = PROJ_FUNCTION(node.position);
+      list += `${pos[0]}, ${pos[1]}, `;
+    }
+    let pos0 = PROJ_FUNCTION(this.nodes[0].position);
+    list += `${pos0[0]}, ${pos0[1]}`
+
+    this.dom.setAttributeNS(null, "points", list);
+
+    let alpha = -0.25;
+    let beta = -0.85;
+    let gamma = 0.75;
+    let center = this.center();
+    let projCenter = PROJ_FUNCTION(this.center());
+    let color = (
+        projCenter[0] * alpha +
+        projCenter[1] * beta +
+        projCenter[2] * gamma) /
+      (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) * 40 / 100 + 150;
+    this.dom.setAttribute('fill', colorGenerator(color, color, color, 1));
+  }
+
+  center() {
+    let centerPos = new Vector3D(0, 0, 0);
+    for (let node of this.nodes) {
+      centerPos.add(node.position);
+    }
+    centerPos.div(this.nodes.length);
+    return centerPos;
+  }
+
+  isBefore(other) {
+    let res = PROJ_FUNCTION(this.center())[2];
+    res -= PROJ_FUNCTION(other.center())[2];
+    return res;
+  }
+
+}
+
+class Triangle extends Polygon {
   constructor(n1, n2, n3) {
+    super([n1, n2, n3]);
+
     this.node1 = n1;
     this.node2 = n2;
     this.node3 = n3;
-
-    this.dom = document.createElementNS(SVGNS, 'polygon');
-    this.dom.setAttribute("class", "face");
-    let c = Math.random() * 0 + 200;
-    this.color = colorGenerator(c, c, c, 1);
-    this.dom = document.createElementNS(SVGNS, 'polygon');
-    this.dom.setAttribute('fill', this.color);
   }
 
   refine(n) {
@@ -106,57 +151,15 @@ class Triangle {
 
     return [newNodes, newFaces];
   }
-
-  show() {
-    var pos1 = PROJ_FUNCTION(this.node1.position);
-    var pos2 = PROJ_FUNCTION(this.node2.position);
-    var pos3 = PROJ_FUNCTION(this.node3.position);
-    let list = `${pos1[0]}, ${pos1[1]}, ${pos2[0]}, ${pos2[1]} `;
-    list += `${pos3[0]}, ${pos3[1]}, ${pos1[0]}, ${pos1[1]} `;
-
-    this.dom.setAttributeNS(null, "points", list);
-
-    let alpha = -0.25;
-    let beta = -0.85;
-    let gamma = 0.75;
-    let color = (
-        (pos1[0] + pos2[0] + pos3[0]) * (alpha) +
-        (pos1[1] + pos2[1] + pos3[1]) * (beta) +
-        (pos1[2] + pos2[2] + pos3[2]) * (gamma)) /
-      (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) *
-      16 / 100 + 150;
-
-    this.dom.setAttribute('fill', colorGenerator(color, color, color, 1));
-
-    // this.dom.setAttribute()
-  }
-
-  isBefore(other) {
-    var res = 0;
-    res += PROJ_FUNCTION(this.node1.position)[2];
-    res += PROJ_FUNCTION(this.node2.position)[2];
-    res += PROJ_FUNCTION(this.node3.position)[2];
-    res -= PROJ_FUNCTION(other.node1.position)[2];
-    res -= PROJ_FUNCTION(other.node2.position)[2];
-    res -= PROJ_FUNCTION(other.node3.position)[2];
-    res /= 3;
-    return res;
-  }
 }
 
-class Quadrangle {
+class Quadrangle extends Polygon {
   constructor(n1, n2, n3, n4) {
+    super([n1, n2, n3, n4]);
     this.node1 = n1;
     this.node2 = n2;
     this.node3 = n3;
     this.node4 = n4;
-
-    this.dom = document.createElementNS(SVGNS, 'polygon');
-    this.dom.setAttribute("class", "face");
-    let c = Math.random() * 0 + 200;
-    this.color = colorGenerator(c, c, c, 1);
-    this.dom = document.createElementNS(SVGNS, 'polygon');
-    this.dom.setAttribute('fill', this.color);
   }
 
   refine(n) {
@@ -204,51 +207,20 @@ class Quadrangle {
 
     return [newNodes, newFaces];
   }
+}
 
-  show() {
-    var pos1 = PROJ_FUNCTION(this.node1.position);
-    var pos2 = PROJ_FUNCTION(this.node2.position);
-    var pos3 = PROJ_FUNCTION(this.node3.position);
-    var pos4 = PROJ_FUNCTION(this.node4.position);
-    let list =
-      `${pos1[0]}, ${pos1[1]}, ` +
-      `${pos2[0]}, ${pos2[1]}, ` +
-      `${pos3[0]}, ${pos3[1]}, ` +
-      `${pos4[0]}, ${pos4[1]}, ` +
-      `${pos1[0]}, ${pos1[1]} `;
-
-    this.dom.setAttributeNS(null, "points", list);
-
-    let alpha = -0.25;
-    let beta = -0.85;
-    let gamma = 0.5;
-    let color = (
-        (pos1[0] + pos2[0] + pos3[0] + pos4[0]) * (alpha) +
-        (pos1[1] + pos2[1] + pos3[1] + pos4[1]) * (beta) +
-        (pos1[2] + pos2[2] + pos3[2] + pos4[2]) * (gamma)) /
-      (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) *
-      12 / 100 + 150;
-
-    this.dom.setAttribute('fill', colorGenerator(color, color, color, 1));
-
-    // this.dom.setAttribute()
+class Quintangle extends Polygon {
+  constructor(n1, n2, n3, n4, n5) {
+    super([n1, n2, n3, n4, n5]);
   }
 
-  isBefore(other) {
-    var res = 0;
-    res += PROJ_FUNCTION(this.node1.position)[2];
-    res += PROJ_FUNCTION(this.node2.position)[2];
-    res += PROJ_FUNCTION(this.node3.position)[2];
-    res += PROJ_FUNCTION(this.node4.position)[2];
-    res -= PROJ_FUNCTION(other.node1.position)[2];
-    res -= PROJ_FUNCTION(other.node2.position)[2];
-    res -= PROJ_FUNCTION(other.node3.position)[2];
-    res -= PROJ_FUNCTION(other.node4.position)[2];
-    res /= 4;
-    return res;
+  refine(n) {
+    let newNodes = this.nodes;
+    let newFaces = this;
+    return [newNodes, newFaces];
   }
 }
 
-EVAL_DISTANCE = function(triangle1, triangle2) {
-  return triangle1.isBefore(triangle2);
+EVAL_DISTANCE = function(polygon1, polygon2) {
+  return polygon1.isBefore(polygon2);
 }
