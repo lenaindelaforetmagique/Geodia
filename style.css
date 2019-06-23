@@ -65,6 +65,8 @@ a:active {
   width: 60px;
   position: absolute;
   cursor: pointer;
+  /* border-radius: 50px; */
+  /* background: rgba(0, 0, 0, 0.2); */
 }
 
 #aleft {

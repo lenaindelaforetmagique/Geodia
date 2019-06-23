@@ -262,6 +262,7 @@ class Universe {
     this.addQuintangle(6, 16, 10, 11, 17, offset);
     this.addQuintangle(7, 18, 10, 11, 19, offset);
 
+
     this.updateFaces();
   }
 

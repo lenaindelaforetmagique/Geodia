@@ -215,8 +215,147 @@ class Quintangle extends Polygon {
   }
 
   refine(n) {
-    let newNodes = this.nodes;
-    let newFaces = this;
+    let newNodes = [];
+    let newFaces = [];
+    let center = this.center();
+
+    // NODES
+    for (let i = 0; i < n; i++) {
+      // niveaux
+      for (let k = 0; k < 5; k++) {
+        // cotés
+        let vectUx = this.nodes[(k + 1) % 5].position.copy();
+        vectUx.sub(this.nodes[k].position);
+        vectUx.div(n);
+        let vectUy = center.copy();
+        vectUy.sub(this.nodes[k].position);
+        vectUy.div(n);
+        for (let j = 0; j < n - i; j++) {
+          // ligne de noeuds
+          // décalage dj
+          let dj = 0;
+          if (i % 3 == 1) {
+            dj = 0.5;
+          } else if (i % 3 == 2) {
+            dj = 0.5;
+          }
+          // this.nodes[k].position + i * uy + j * ux
+          let newNode = new Node(0, 0, 0, "5");
+          let tmpX = vectUx.copy();
+          tmpX.mult(j + dj);
+          let tmpY = vectUy.copy();
+          tmpY.mult(i);
+          newNode.position = this.nodes[k].position.copy();
+          newNode.position.add(tmpX);
+          newNode.position.add(tmpY);
+
+          newNodes.push(newNode);
+        }
+      }
+    }
+    if (n > 0 && n % 3 == 0) {
+      let newNode = new Node(0, 0, 0);
+      newNode.position = center.copy();
+      newNodes.push(newNode);
+    }
+
+    // Quintangles
+    let offset = 0;
+    let newFace;
+    while (n > 0) {
+      // type 1 : sommets
+      if (n != 1) {
+        newFace = new Quintangle(
+          newNodes[5 * n - 1 + offset],
+          newNodes[0 + offset],
+          newNodes[1 + offset],
+          newNodes[5 * n + offset],
+          newNodes[5 * n + 5 * (n - 1) - 1 + offset]
+        );
+        newFaces.push(newFace);
+        for (let k = 1; k < 5; k++) {
+          newFace = new Quintangle(
+            newNodes[k * n - 1 + offset],
+            newNodes[k * n + offset],
+            newNodes[k * n + 1 + offset],
+            newNodes[5 * n + k * (n - 1) + offset],
+            newNodes[5 * n + k * (n - 1) - 1 + offset]
+          );
+          newFaces.push(newFace);
+        }
+      }
+
+      // type 2 : bas
+      for (let i = 0; i <= n - 3; i++) {
+        for (let k = 0; k < 5; k++) {
+          newFace = new Quintangle(
+            newNodes[k * n + i + 1 + offset],
+            newNodes[k * n + i + 2 + offset],
+            newNodes[5 * n + k * (n - 1) + i + 1 + offset],
+            newNodes[5 * n + 5 * (n - 1) + k * (n - 2) + i + offset],
+            newNodes[5 * n + k * (n - 1) + i + offset]
+          );
+          newFaces.push(newFace);
+        }
+      }
+
+      // type 3 : contre-sommet
+      if (n >= 3) {
+        newFace = new Quintangle(
+          newNodes[5 * n + 5 * (n - 1) - 1 + offset],
+          newNodes[5 * n + offset],
+          newNodes[5 * n + 5 * (n - 1) + offset],
+          newNodes[5 * n + 5 * (n - 1) + 5 * (n - 2) + offset],
+          newNodes[5 * n + 5 * (n - 1) + 5 * (n - 2) - 1 + offset]
+        );
+        newFaces.push(newFace);
+
+        for (let k = 1; k < 5; k++) {
+          newFace = new Quintangle(
+            newNodes[5 * n + k * (n - 1) - 1 + offset],
+            newNodes[5 * n + k * (n - 1) + offset],
+            newNodes[5 * n + 5 * (n - 1) + k * (n - 2) + offset],
+            newNodes[5 * n + 5 * (n - 1) + 5 * (n - 2) + k * (n - 3) + offset],
+            newNodes[5 * n + 5 * (n - 1) + k * (n - 2) - 1 + offset]
+          );
+          newFaces.push(newFace);
+        }
+      }
+
+      // type 4 : haut
+      for (let k = 0; k < 5; k++) {
+        for (let i = 1; i <= n - 3; i++) {
+          newFace = new Quintangle(
+            newNodes[5 * n + k * (n - 1) + i + offset],
+            newNodes[5 * n + 5 * (n - 1) + (k * (n - 2) + i) % (5 * (n - 2)) + offset],
+            newNodes[5 * n + 5 * (n - 1) + 5 * (n - 2) + (k * (n - 3) + i) % (5 * (n - 3)) + offset],
+            newNodes[5 * n + 5 * (n - 1) + 5 * (n - 2) + k * (n - 3) + i - 1 + offset],
+            newNodes[5 * n + 5 * (n - 1) + k * (n - 2) + i - 1 + offset]
+          );
+          newFaces.push(newFace);
+        }
+      }
+
+      // type 5 : calotte
+      if (n == 1 || n == 2) {
+        let max = newNodes.length;
+        newFace = new Quintangle(
+          newNodes[max - 1],
+          newNodes[max - 2],
+          newNodes[max - 3],
+          newNodes[max - 4],
+          newNodes[max - 5]
+        );
+        newFaces.push(newFace);
+      }
+
+
+      offset += 5 * n + 5 * (n - 1) + 5 * (n - 2);
+      n -= 3;
+    }
+
+
+
     return [newNodes, newFaces];
   }
 }
