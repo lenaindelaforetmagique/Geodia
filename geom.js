@@ -70,12 +70,19 @@ class Polygon {
     let beta = -0.85;
     let gamma = 0.75;
     let center = this.center();
-    let projCenter = PROJ_FUNCTION(this.center());
-    let color = (
-        projCenter[0] * alpha +
-        projCenter[1] * beta +
-        projCenter[2] * gamma) /
-      (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) * 40 / 100 + 150;
+
+    let light = RAYTRACING_LIGHT(this.center(), this.normalVector());
+
+    // let projCenter = PROJ_FUNCTION(this.center());
+    //
+    //
+    // let color = (
+    //     projCenter[0] * alpha +
+    //     projCenter[1] * beta +
+    //     projCenter[2] * gamma) /
+    //   (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) * 40 / 100 + 150;
+    let color = 100 + 155 * light;
+    // console.log(light);
     this.dom.setAttribute('fill', colorGenerator(color, color, color, 1));
   }
 
@@ -86,6 +93,26 @@ class Polygon {
     }
     centerPos.div(this.nodes.length);
     return centerPos;
+  }
+
+  normalVector() {
+    let res;
+    let v1 = this.nodes[1].position.copy();
+    v1.sub(this.nodes[0].position);
+    // v1.normalize();
+    let v2 = this.nodes[2].position.copy();
+    v2.sub(this.nodes[0].position);
+    // v2.normalize();
+    res = v1.crossProduct(v2);
+    res.normalize();
+    // sign
+    let v3 = new Vector3D(0, 0, 0);
+    v3.sub(this.center());
+    if (res.dotProduct(v3) > 0) {
+      res.mult(-1);
+    }
+    return res;
+
   }
 
   isBefore(other) {

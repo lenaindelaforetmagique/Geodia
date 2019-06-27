@@ -161,7 +161,7 @@ class Universe {
     this.addTriangle(0, 1, 2, offset);
     this.addTriangle(0, 2, 3, offset);
     this.addTriangle(0, 3, 1, offset);
-    this.addTriangle(1, 2, 3, offset);
+    this.addTriangle(1, 3, 2, offset);
     this.updateFaces();
   }
 

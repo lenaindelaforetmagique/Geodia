@@ -62,4 +62,5 @@ PROJ_CHANGE_LAMBDA = function(intensity = 0) {
 // =============================================================================
 PROJ_LAMBDA = 10;
 PROJ_PHI = 190;
+PROJ_RR = 400;
 PROJ_UPDATE_VECTORS();
