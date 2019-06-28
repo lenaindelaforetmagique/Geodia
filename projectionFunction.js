@@ -37,6 +37,12 @@ PROJ_UPDATE_VECTORS = function() {
   // console.log(PROJ_LAMBDA, PROJ_PHI);
 }
 
+PROJ_CAMERA = function() {
+  var res = PROJ_UZ.copy();
+  res.mult(PROJ_RR);
+  return res;
+}
+
 
 PROJ_CHANGE_PHI = function(intensity = 0) {
   PROJ_PHI += intensity * 10 * PROJ_UX_SIGN;

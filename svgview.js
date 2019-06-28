@@ -6,8 +6,12 @@ if (!Array.prototype.last) {
   };
 };
 
-colorGenerator = function(r = 0, g = 0, b = 0, alpha = 1) {
+colorGeneratorRGBA = function(r = 0, g = 0, b = 0, alpha = 1) {
   return `rgba(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)}, ${alpha})`;
+}
+colorGeneratorHSLA = function(h = 0, s = 0, l = 0, alpha = 1) {
+  // return `hsl(${Math.floor(h)}, ${Math.floor(s)}, ${Math.floor(l)}, ${alpha})`;
+  return `hsl(${h}, ${s}%, ${l}%, ${alpha})`;
 }
 
 wait = function(timeMS) {
@@ -38,8 +42,8 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    this.idPolyedre = 0;
-    this.refinement = 1;
+    this.idPolyedre = 4;
+    this.refinement = 10;
 
     this.init();
     this.addEvents();
@@ -437,9 +441,14 @@ class Universe {
       // e.preventDefault();
       // console.log(e);
       if (e.buttons > 0) {
-        // console.log(e.buttons);
-        PROJ_CHANGE_PHI(-e.movementX / 10);
-        PROJ_CHANGE_LAMBDA(e.movementY / 10);
+        // console.log(e);
+        if (e.ctrlKey) {
+          RAYTRACING_CHANGE_PHI(-e.movementX / 10);
+          RAYTRACING_CHANGE_LAMBDA(e.movementY / 10);
+        } else {
+          PROJ_CHANGE_PHI(-e.movementX / 10);
+          PROJ_CHANGE_LAMBDA(e.movementY / 10);
+        }
         thiz.update();
 
         // thiz.addNode(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));

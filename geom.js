@@ -71,19 +71,9 @@ class Polygon {
     let gamma = 0.75;
     let center = this.center();
 
-    let light = RAYTRACING_LIGHT(this.center(), this.normalVector());
-
-    // let projCenter = PROJ_FUNCTION(this.center());
-    //
-    //
-    // let color = (
-    //     projCenter[0] * alpha +
-    //     projCenter[1] * beta +
-    //     projCenter[2] * gamma) /
-    //   (Math.sqrt(alpha ** 2 + beta ** 2 + gamma ** 2)) * 40 / 100 + 150;
-    let color = 100 + 155 * light;
-    // console.log(light);
-    this.dom.setAttribute('fill', colorGenerator(color, color, color, 1));
+    let color_SL = RAYTRACING_LIGHT(this.center(), this.normalVector());
+    // this.dom.setAttribute('fill', colorGeneratorRGBA(color, 0 * color, 0 * color, 1));
+    this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, 1));
   }
 
   center() {
