@@ -42,8 +42,8 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    this.idPolyedre = 4;
-    this.refinement = 10;
+    this.idPolyedre = 0;
+    this.refinement = 1;
 
     this.init();
     this.addEvents();
