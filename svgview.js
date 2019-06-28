@@ -43,9 +43,7 @@ class Universe {
     this.faces = [];
 
     this.refinement = 1;
-    this.polyID = 0;
-    this.polyNames = ["Tétraèdre", "Hexaèdre", "Octaèdre", "Dodecaèdre", "Icosaèdre"];
-    this.polyFunctions = [this.tetraedre, this.hexaedre, this.octaedre, this.dodecaedre, this.icosaedre];
+    this.polyID = -1;
 
     this.init();
     this.addEvents();
@@ -72,14 +70,15 @@ class Universe {
     var legend = "";
 
     while (this.polyID < 0) {
-      this.polyID += this.polyNames.length;
+      this.polyID += POLY_NAMES.length;
     }
-    this.polyID = this.polyID % this.polyNames.length;
+    this.polyID = this.polyID % POLY_NAMES.length;
 
-    let func = this.polyFunctions[this.polyID];
+    let drawPolyedre = POLY_FUNCTIONS[this.polyID];
 
-    func(this);
-    legend = this.polyNames[this.polyID];
+    drawPolyedre(this);
+    this.updateFaces();
+    legend = POLY_NAMES[this.polyID];
 
     if (this.refinement > 1) {
       this.refine(this.refinement);
@@ -129,164 +128,6 @@ class Universe {
       this.nodes[id5 + offset]
     );
     this.faces.push(newQuintangle);
-  }
-
-  tetraedre(thiz) {
-    let fact = thiz.radius / 3;
-    // Nodes (12)
-    let offset = thiz.nodes.length;
-    thiz.addNode(Math.sqrt(6) * fact, -Math.sqrt(2) * fact, -1 * fact);
-    thiz.addNode(-Math.sqrt(6) * fact, -Math.sqrt(2) * fact, -1 * fact);
-    thiz.addNode(0, 2 * Math.sqrt(2) * fact, -1 * fact);
-    thiz.addNode(0, 0, 3 * fact);
-
-    // Triangles (20)
-    thiz.addTriangle(0, 1, 2, offset);
-    thiz.addTriangle(0, 2, 3, offset);
-    thiz.addTriangle(0, 3, 1, offset);
-    thiz.addTriangle(1, 3, 2, offset);
-
-    thiz.updateFaces();
-  }
-
-  hexaedre(thiz) {
-    let one = thiz.radius / Math.sqrt(3);
-    // Nodes (12)
-    let offset = thiz.nodes.length;
-    thiz.addNode(-one, -one, -one);
-    thiz.addNode(-one, one, -one);
-    thiz.addNode(one, -one, -one);
-    thiz.addNode(one, one, -one);
-    thiz.addNode(-one, -one, one);
-    thiz.addNode(-one, one, one);
-    thiz.addNode(one, -one, one);
-    thiz.addNode(one, one, one);
-
-    // Triangles (20)
-    thiz.addQuadrangle(0, 1, 3, 2, offset);
-    thiz.addQuadrangle(0, 4, 5, 1, offset);
-    thiz.addQuadrangle(0, 2, 6, 4, offset);
-    thiz.addQuadrangle(1, 5, 7, 3, offset);
-    thiz.addQuadrangle(2, 3, 7, 6, offset);
-    thiz.addQuadrangle(4, 6, 7, 5, offset);
-
-    thiz.updateFaces();
-  }
-
-  octaedre(thiz) {
-    let fact = thiz.radius;
-    let offset = thiz.nodes.length;
-    // Nodes (12)
-    thiz.addNode(1 * fact, 0, 0);
-    thiz.addNode(-1 * fact, 0, 0);
-    thiz.addNode(0, 1 * fact, 0);
-    thiz.addNode(0, -1 * fact, 0);
-    thiz.addNode(0, 0, 1 * fact);
-    thiz.addNode(0, 0, -1 * fact);
-
-    // Faces (8)
-    thiz.addTriangle(0, 2, 5, offset);
-    thiz.addTriangle(0, 5, 3, offset);
-    thiz.addTriangle(0, 3, 4, offset);
-    thiz.addTriangle(0, 4, 2, offset);
-    thiz.addTriangle(1, 2, 4, offset);
-    thiz.addTriangle(1, 4, 3, offset);
-    thiz.addTriangle(1, 3, 5, offset);
-    thiz.addTriangle(1, 5, 2, offset);
-
-    thiz.updateFaces();
-  }
-
-  dodecaedre(thiz) {
-    let fact = thiz.radius / Math.sqrt(3);
-    let offset = thiz.nodes.length;
-
-    let one = fact * 1;
-    let phi = fact * (1 + Math.sqrt(5)) / 2;
-    let one_phi = fact * 1 / ((1 + Math.sqrt(5)) / 2);
-    // Nodes (12)
-    thiz.addNode(0, one_phi, phi);
-    thiz.addNode(0, one_phi, -phi);
-    thiz.addNode(0, -one_phi, phi);
-    thiz.addNode(0, -one_phi, -phi);
-    thiz.addNode(one_phi, phi, 0);
-    thiz.addNode(one_phi, -phi, 0);
-    thiz.addNode(-one_phi, phi, 0);
-    thiz.addNode(-one_phi, -phi, 0);
-    thiz.addNode(phi, 0, one_phi);
-    thiz.addNode(phi, 0, -one_phi);
-    thiz.addNode(-phi, 0, one_phi);
-    thiz.addNode(-phi, 0, -one_phi);
-    thiz.addNode(one, one, one);
-    thiz.addNode(one, one, -one);
-    thiz.addNode(one, -one, one);
-    thiz.addNode(one, -one, -one);
-    thiz.addNode(-one, one, one);
-    thiz.addNode(-one, one, -one);
-    thiz.addNode(-one, -one, one);
-    thiz.addNode(-one, -one, -one);
-
-    // Faces (8)
-    thiz.addQuintangle(0, 2, 14, 8, 12, offset);
-    thiz.addQuintangle(0, 12, 4, 6, 16, offset);
-    thiz.addQuintangle(0, 16, 10, 18, 2, offset);
-    thiz.addQuintangle(1, 3, 15, 9, 13, offset);
-    thiz.addQuintangle(1, 13, 4, 6, 17, offset);
-    thiz.addQuintangle(1, 17, 11, 19, 3, offset);
-    thiz.addQuintangle(2, 14, 5, 7, 18, offset);
-    thiz.addQuintangle(3, 15, 5, 7, 19, offset);
-    thiz.addQuintangle(4, 12, 8, 9, 13, offset);
-    thiz.addQuintangle(5, 14, 8, 9, 15, offset);
-    thiz.addQuintangle(6, 16, 10, 11, 17, offset);
-    thiz.addQuintangle(7, 18, 10, 11, 19, offset);
-
-    thiz.updateFaces();
-  }
-
-
-  icosaedre(thiz) {
-    let offset = thiz.nodes.length;
-    let phi = (1 + Math.sqrt(5)) / 2;
-    let one = 1;
-    let fact = thiz.radius / Math.sqrt(1 + phi ** 2);
-    phi *= fact;
-    one *= fact;
-    // Nodes (12)
-    thiz.addNode(phi, one, 0);
-    thiz.addNode(phi, -one, 0);
-    thiz.addNode(-phi, one, 0);
-    thiz.addNode(-phi, -one, 0);
-    thiz.addNode(one, 0, phi);
-    thiz.addNode(-one, 0, phi);
-    thiz.addNode(one, 0, -phi);
-    thiz.addNode(-one, 0, -phi);
-    thiz.addNode(0, phi, one);
-    thiz.addNode(0, phi, -one);
-    thiz.addNode(0, -phi, one);
-    thiz.addNode(0, -phi, -one);
-
-    // Faces (20)
-    thiz.addTriangle(0, 1, 4, offset);
-    thiz.addTriangle(0, 4, 8, offset);
-    thiz.addTriangle(0, 8, 9, offset);
-    thiz.addTriangle(0, 9, 6, offset);
-    thiz.addTriangle(0, 6, 1, offset);
-    thiz.addTriangle(1, 6, 11, offset);
-    thiz.addTriangle(1, 11, 10, offset);
-    thiz.addTriangle(1, 10, 4, offset);
-    thiz.addTriangle(2, 3, 7, offset);
-    thiz.addTriangle(2, 7, 9, offset);
-    thiz.addTriangle(2, 9, 8, offset);
-    thiz.addTriangle(2, 8, 5, offset);
-    thiz.addTriangle(2, 5, 3, offset);
-    thiz.addTriangle(3, 5, 10, offset);
-    thiz.addTriangle(3, 10, 11, offset);
-    thiz.addTriangle(3, 11, 7, offset);
-    thiz.addTriangle(4, 10, 5, offset);
-    thiz.addTriangle(4, 5, 8, offset);
-    thiz.addTriangle(6, 9, 7, offset);
-    thiz.addTriangle(6, 7, 11, offset);
-    thiz.updateFaces();
   }
 
   refine(n) {
