@@ -43,7 +43,7 @@ class Universe {
     this.faces = [];
 
     this.refinement = 1;
-    this.polyID = -1;
+    this.polyID = 0;
 
     this.init();
     this.addEvents();
