@@ -40,14 +40,14 @@ let polyID = getQueryVariable("polyID");
 if (!polyID) {
   polyID = 0;
 } else {
-  polyID = ParseInt(polyID);
+  polyID = parseInt(polyID);
 }
 
 let refinement = getQueryVariable("refinement");
 if (!refinement) {
   refinement = 1;
 } else {
-  refinement = ParseInt(refinement);
+  refinement = parseInt(refinement);
 }
 
 
