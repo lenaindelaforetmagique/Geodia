@@ -1,6 +1,7 @@
-var PROJ_LAMBDA;
-var PROJ_PHI;
-var PROJ_RR;
+var PROJ_LAMBDA; // latitude
+var PROJ_PHI; // longitude
+var PROJ_RR; // distance of screen
+var PROJ_D; // distance of convergence point
 var PROJ_UX = new Vector3D();
 var PROJ_UY = new Vector3D();
 var PROJ_UZ = new Vector3D();
@@ -11,7 +12,9 @@ PROJ_FUNCTION = function(vector) {
   var newX = PROJ_UX.dotProduct(vector);
   var newY = PROJ_UY.dotProduct(vector);
   var newZ = PROJ_UZ.dotProduct(vector);
-  return [newX, newY, newZ];
+  // console.log(newZ);
+  let fact = PROJ_D / (PROJ_D + PROJ_RR - newZ);
+  return [newX * fact, newY * fact, newZ];
 }
 
 var DEG_TO_RAD = Math.PI / 180;
@@ -43,6 +46,11 @@ PROJ_CAMERA = function() {
   return res;
 }
 
+PROJ_CHANGE_D = function(intensity = 0) {
+  PROJ_D += intensity * 10;
+  PROJ_D = Math.max(10, PROJ_D);
+}
+
 
 PROJ_CHANGE_PHI = function(intensity = 0) {
   PROJ_PHI += intensity * 10 * PROJ_UX_SIGN;
@@ -68,5 +76,6 @@ PROJ_CHANGE_LAMBDA = function(intensity = 0) {
 // =============================================================================
 PROJ_LAMBDA = 10;
 PROJ_PHI = 190;
-PROJ_RR = 400;
+PROJ_RR = 250;
+PROJ_D = 1000;
 PROJ_UPDATE_VECTORS();

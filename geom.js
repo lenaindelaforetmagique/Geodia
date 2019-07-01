@@ -1,3 +1,5 @@
+ALPHA = 1;
+
 class Node {
   constructor(x_ = 0, y_ = 0, z_ = 0, id) {
     this.position = new Vector3D(x_, y_, z_);
@@ -73,7 +75,8 @@ class Polygon {
 
     let color_SL = RAYTRACING_LIGHT(this.center(), this.normalVector());
     // this.dom.setAttribute('fill', colorGeneratorRGBA(color, 0 * color, 0 * color, 1));
-    this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, 1));
+    // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, 0.4));
+    this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
   }
 
   center() {
