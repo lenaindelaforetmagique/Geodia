@@ -205,11 +205,11 @@ class Universe {
           break;
         case "PAGEUP":
           ALPHA = Math.min(1, ALPHA + 0.05);
-          thiz.init();
+          thiz.update();
           break;
         case "PAGEDOWN":
           ALPHA = Math.max(0, ALPHA - 0.05);
-          thiz.init();
+          thiz.update();
           break;
         default:
           // console.log(e);
