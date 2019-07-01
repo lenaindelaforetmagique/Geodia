@@ -13,7 +13,7 @@ PROJ_FUNCTION = function(vector) {
   var newY = PROJ_UY.dotProduct(vector);
   var newZ = PROJ_UZ.dotProduct(vector);
   // console.log(newZ);
-  let fact = PROJ_D / (PROJ_D + PROJ_RR - newZ);
+  let fact = PROJ_D / (PROJ_D + PROJ_RR - newZ) / (PROJ_D / (PROJ_D + PROJ_RR));
   return [newX * fact, newY * fact, newZ];
 }
 
