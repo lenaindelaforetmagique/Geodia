@@ -97,6 +97,19 @@ class Universe {
     newNode.show();
   }
 
+  addNode_COG(nodeList, offset) {
+    let newNode = new Node(0, 0, 0, this.nodes.length);
+    // let nodePos = new Vector3D(0,0,0);
+    for (let i of nodeList) {
+      newNode.position.add(this.nodes[i + offset].position);
+    }
+    newNode.position.div(nodeList.length);
+
+    this.nodes.push(newNode);
+    this.nodesDom.appendChild(newNode.dom);
+    newNode.show();
+  }
+
   addEdge(id1, id2, offset = 0) {
     let newEdge = new Edge(this.nodes[id1 + offset], this.nodes[id2 + offset]);
     this.edges.push(newEdge);
@@ -154,7 +167,6 @@ class Universe {
       newFace.show();
     }
     this.updateFaces();
-
   }
 
 

@@ -287,6 +287,115 @@ POLY_FUNCTIONS.push(function(parent) {
   parent.addQuintangle(15, 19, 29, 21, 27, offset);
   // parent.addQuintangle(17,,,,, offset);
 
+});
 
+// 12
+POLY_NAMES.push("Pentakidodécaèdre");
+POLY_FUNCTIONS.push(function(parent) {
+  let fact = parent.radius / Math.sqrt(3);
+  let offset = parent.nodes.length;
 
+  let one = fact * 1;
+  let phi = fact * (1 + Math.sqrt(5)) / 2;
+  let one_phi = fact * 1 / ((1 + Math.sqrt(5)) / 2);
+  // Nodes (20)
+  parent.addNode(0, one_phi, phi);
+  parent.addNode(0, one_phi, -phi);
+  parent.addNode(0, -one_phi, phi);
+  parent.addNode(0, -one_phi, -phi);
+  parent.addNode(one_phi, phi, 0);
+  parent.addNode(one_phi, -phi, 0);
+  parent.addNode(-one_phi, phi, 0);
+  parent.addNode(-one_phi, -phi, 0);
+  parent.addNode(phi, 0, one_phi);
+  parent.addNode(phi, 0, -one_phi);
+  parent.addNode(-phi, 0, one_phi);
+  parent.addNode(-phi, 0, -one_phi);
+  parent.addNode(one, one, one);
+  parent.addNode(one, one, -one);
+  parent.addNode(one, -one, one);
+  parent.addNode(one, -one, -one);
+  parent.addNode(-one, one, one);
+  parent.addNode(-one, one, -one);
+  parent.addNode(-one, -one, one);
+  parent.addNode(-one, -one, -one);
+
+  // Nodes (+12)
+  parent.addNode_COG([0, 2, 14, 8, 12], offset);
+  parent.addNode_COG([0, 12, 4, 6, 16], offset);
+  parent.addNode_COG([0, 16, 10, 18, 2], offset);
+  parent.addNode_COG([1, 3, 15, 9, 13], offset);
+  parent.addNode_COG([1, 13, 4, 6, 17], offset);
+  parent.addNode_COG([1, 17, 11, 19, 3], offset);
+  parent.addNode_COG([2, 14, 5, 7, 18], offset);
+  parent.addNode_COG([3, 15, 5, 7, 19], offset);
+  parent.addNode_COG([4, 12, 8, 9, 13], offset);
+  parent.addNode_COG([5, 14, 8, 9, 15], offset);
+  parent.addNode_COG([6, 16, 10, 11, 17], offset);
+  parent.addNode_COG([7, 18, 10, 11, 19], offset);
+  for (let i = 19; i <= 31; i++) {
+    parent.nodes[offset + i].position.forceNorm(parent.radius);
+  }
+
+  // Faces (60)
+  parent.addTriangle(0, 2, 20, offset);
+  parent.addTriangle(2, 14, 20, offset);
+  parent.addTriangle(14, 8, 20, offset);
+  parent.addTriangle(8, 12, 20, offset);
+  parent.addTriangle(12, 0, 20, offset);
+  parent.addTriangle(0, 12, 21, offset);
+  parent.addTriangle(12, 4, 21, offset);
+  parent.addTriangle(4, 6, 21, offset);
+  parent.addTriangle(6, 16, 21, offset);
+  parent.addTriangle(16, 0, 21, offset);
+  parent.addTriangle(0, 16, 22, offset);
+  parent.addTriangle(16, 10, 22, offset);
+  parent.addTriangle(10, 18, 22, offset);
+  parent.addTriangle(18, 2, 22, offset);
+  parent.addTriangle(2, 0, 22, offset);
+  parent.addTriangle(1, 3, 23, offset);
+  parent.addTriangle(3, 15, 23, offset);
+  parent.addTriangle(15, 9, 23, offset);
+  parent.addTriangle(9, 13, 23, offset);
+  parent.addTriangle(13, 1, 23, offset);
+  parent.addTriangle(1, 13, 24, offset);
+  parent.addTriangle(13, 4, 24, offset);
+  parent.addTriangle(4, 6, 24, offset);
+  parent.addTriangle(6, 17, 24, offset);
+  parent.addTriangle(17, 1, 24, offset);
+  parent.addTriangle(1, 17, 25, offset);
+  parent.addTriangle(17, 11, 25, offset);
+  parent.addTriangle(11, 19, 25, offset);
+  parent.addTriangle(19, 3, 25, offset);
+  parent.addTriangle(3, 1, 25, offset);
+  parent.addTriangle(2, 14, 26, offset);
+  parent.addTriangle(14, 5, 26, offset);
+  parent.addTriangle(5, 7, 26, offset);
+  parent.addTriangle(7, 18, 26, offset);
+  parent.addTriangle(18, 2, 26, offset);
+  parent.addTriangle(3, 15, 27, offset);
+  parent.addTriangle(15, 5, 27, offset);
+  parent.addTriangle(5, 7, 27, offset);
+  parent.addTriangle(7, 19, 27, offset);
+  parent.addTriangle(19, 3, 27, offset);
+  parent.addTriangle(4, 12, 28, offset);
+  parent.addTriangle(12, 8, 28, offset);
+  parent.addTriangle(8, 9, 28, offset);
+  parent.addTriangle(9, 13, 28, offset);
+  parent.addTriangle(13, 4, 28, offset);
+  parent.addTriangle(5, 14, 29, offset);
+  parent.addTriangle(14, 8, 29, offset);
+  parent.addTriangle(8, 9, 29, offset);
+  parent.addTriangle(9, 15, 29, offset);
+  parent.addTriangle(15, 5, 29, offset);
+  parent.addTriangle(6, 16, 30, offset);
+  parent.addTriangle(16, 10, 30, offset);
+  parent.addTriangle(10, 11, 30, offset);
+  parent.addTriangle(11, 17, 30, offset);
+  parent.addTriangle(17, 6, 30, offset);
+  parent.addTriangle(7, 18, 31, offset);
+  parent.addTriangle(18, 10, 31, offset);
+  parent.addTriangle(10, 11, 31, offset);
+  parent.addTriangle(11, 19, 31, offset);
+  parent.addTriangle(19, 7, 31, offset);
 });
