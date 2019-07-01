@@ -25,6 +25,11 @@ A nice viewer for [Gedoesic grids][GeodesicGridsWikipedia].
 ### Touch
 - same as simple click & move.
 
+### Query string
+Query argument may be added to URL after '?':
+- polyID=2 : a "number" represeting the starting polyedra.
+- refinement=2 : the order of generation.
+
 License
 =======
 

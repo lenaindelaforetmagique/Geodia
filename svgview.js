@@ -23,7 +23,7 @@ wait = function(timeMS) {
 }
 
 class Universe {
-  constructor() {
+  constructor(polyID_ = 0, refinement_ = 1) {
     this.container = document.getElementById("container");
     this.lb = document.getElementById("aleft");
     this.rb = document.getElementById("aright");
@@ -42,8 +42,9 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    this.refinement = 1;
-    this.polyID = 0;
+    this.polyID = polyID_;
+    this.refinement = refinement_;
+
 
     this.init();
     this.addEvents();
