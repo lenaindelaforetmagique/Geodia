@@ -250,6 +250,8 @@ class Universe {
           RAYTRACING_CHANGE_LAMBDA(e.movementY / 10);
         } else if (e.shiftKey) {
           PROJ_CHANGE_D(e.movementX + e.movementY);
+        } else if (e.altKey) {
+          PROJ_CHANGE_EXPLODE(e.movementX + e.movementY);
         } else {
           PROJ_CHANGE_PHI(-e.movementX / 10);
           PROJ_CHANGE_LAMBDA(e.movementY / 10);

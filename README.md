@@ -16,6 +16,7 @@ A nice viewer for [Gedoesic grids][GeodesicGridsWikipedia].
 - wheel : zoom in/out.
 - CTRL + click & move : change position of light.
 - SHIFT + click & move : change perspective ratio.
+- ALT + click & move : change explosion ratio.
 
 ### Keyboard
 - left/right arrows to change polyedra generator.

@@ -6,6 +6,7 @@ var PROJ_UX = new Vector3D();
 var PROJ_UY = new Vector3D();
 var PROJ_UZ = new Vector3D();
 var PROJ_UX_SIGN = 1;
+var PROJ_EXPLODE;
 
 
 PROJ_FUNCTION = function(vector) {
@@ -73,9 +74,17 @@ PROJ_CHANGE_LAMBDA = function(intensity = 0) {
   PROJ_UPDATE_VECTORS();
 }
 
+
+PROJ_CHANGE_EXPLODE = function(intensity = 0) {
+  PROJ_EXPLODE += intensity;
+  PROJ_EXPLODE = Math.max(0, PROJ_EXPLODE);
+  PROJ_EXPLODE = Math.min(600, PROJ_EXPLODE);
+}
+
 // =============================================================================
 PROJ_LAMBDA = 10;
 PROJ_PHI = 190;
 PROJ_RR = 250;
 PROJ_D = 1000;
+PROJ_EXPLODE = 0;
 PROJ_UPDATE_VECTORS();

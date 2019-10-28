@@ -59,11 +59,17 @@ class Polygon {
 
   show() {
     let list = "";
+    let a = this.normalVector().copy();
+    a.mult(PROJ_EXPLODE);
     for (let node of this.nodes) {
-      let pos = PROJ_FUNCTION(node.position);
+      let b = node.position.copy();
+      b.add(a)
+      let pos = PROJ_FUNCTION(b);
       list += `${pos[0]}, ${pos[1]}, `;
     }
-    let pos0 = PROJ_FUNCTION(this.nodes[0].position);
+    let b = this.nodes[0].position.copy();
+    b.add(a)
+    let pos0 = PROJ_FUNCTION(b);
     list += `${pos0[0]}, ${pos0[1]}`
 
     this.dom.setAttributeNS(null, "points", list);
