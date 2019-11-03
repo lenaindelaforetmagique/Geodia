@@ -45,6 +45,11 @@ class Universe {
     this.polyID = polyID_;
     this.refinement = refinement_;
 
+    let header = document.getElementById("header");
+    let footer = document.getElementById("footer");
+    console.log(this.viewBox.fact);
+    this.viewBox.translate(-window.innerWidth / 2, -(footer.offsetTop + header.offsetTop + header.offsetHeight) / 2);
+
 
     this.init();
     this.addEvents();
@@ -396,8 +401,8 @@ class ViewBox {
     let fact = 2 * 1.5 * this.radius / Math.min(window.innerWidth, window.innerHeight);
     this.width = window.innerWidth * fact;
     this.height = window.innerHeight * fact;
-    this.xMin = -this.width / 2;
-    this.yMin = -this.height / 2;
+    this.xMin = 0; //-this.width / 2;
+    this.yMin = 0; //-this.height / 2;
     this.set();
   }
 
