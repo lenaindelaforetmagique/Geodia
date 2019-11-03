@@ -302,26 +302,61 @@ class Universe {
     this.prevX = null;
     this.prevY = null;
 
+    this.prevPos = null;
+
+    this.getTouchPos = function(e) {
+      let thisX = 0;
+      let thisY = 0;
+      let thisSize = 0;
+
+      for (let touch of e.touches) {
+        thisX += touch.clientX;
+        thisY += touch.clientY;
+
+        for (let other of e.touches) {
+          let l = Math.pow(touch.clientX - other.clientX, 2);
+          l += Math.pow(touch.clientY - other.clientY, 2);
+          thisSize = Math.max(thisSize, l);
+        }
+      }
+
+      thisX /= e.touches.length;
+      thisY /= e.touches.length;
+
+      thisSize = Math.pow(thisSize, 0.5);
+
+      return {
+        x: thisX,
+        y: thisY,
+        size: thisSize
+      };
+    }
+
     this.container.addEventListener("touchstart", function(e) {
       e.preventDefault();
+      this.prevPos = thiz.getTouchPos(e);
     }, false);
 
     this.container.addEventListener("touchmove", function(e) {
       e.preventDefault();
-      if (thiz.prevX != null) {
-        PROJ_CHANGE_PHI(-(e.changedTouches[0].clientX - thiz.prevX) / 10);
-        PROJ_CHANGE_LAMBDA((e.changedTouches[0].clientY - thiz.prevY) / 10);
+      let curPos = thiz.getTouchPos(e);
+
+      if (thiz.prevPos != null) {
+        if (e.touches.length > 1) {
+          PROJ_CHANGE_EXPLODE(-(curPos.x - thiz.prevPos.x + curPos.y - thiz.prevPos.y));
+        } else {
+          PROJ_CHANGE_PHI(-(curPos.x - thiz.prevPos.x) / 10);
+          PROJ_CHANGE_LAMBDA((curPos.y - thiz.prevPos.y) / 10);
+        }
+
         thiz.update();
       }
-      thiz.prevX = e.changedTouches[0].clientX;
-      thiz.prevY = e.changedTouches[0].clientY;
-
+      thiz.prevPos = curPos;
     }, false);
 
     this.container.addEventListener("touchend", function(e) {
       e.preventDefault();
-      thiz.prevX = null;
-      thiz.prevY = null;
+      thiz.prevPos = null;
     }, false);
 
     this.container.addEventListener("touchcancel", function(e) {
