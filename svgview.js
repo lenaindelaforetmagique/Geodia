@@ -348,7 +348,9 @@ class Universe {
 
       if (thiz.prevPos != null) {
         if (e.touches.length > 1) {
-          PROJ_CHANGE_EXPLODE(-(curPos.x - thiz.prevPos.x + curPos.y - thiz.prevPos.y));
+          if (thiz.prevPos.length > 0) {
+            PROJ_CHANGE_EXPLODE(-(curPos.x - thiz.prevPos.x + curPos.y - thiz.prevPos.y));
+          }
         } else {
           PROJ_CHANGE_PHI(-(curPos.x - thiz.prevPos.x) / 10);
           PROJ_CHANGE_LAMBDA((curPos.y - thiz.prevPos.y) / 10);
