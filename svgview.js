@@ -47,7 +47,7 @@ class Universe {
 
     let header = document.getElementById("header");
     let footer = document.getElementById("footer");
-    console.log(this.viewBox.fact);
+    // console.log(this.viewBox.fact);
     this.viewBox.translate(-window.innerWidth / 2, -(footer.offsetTop + header.offsetTop + header.offsetHeight) / 2);
 
 
