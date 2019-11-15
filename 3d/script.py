@@ -1,4 +1,6 @@
-file = open("Wolf.obj")
+file = open(r"low poly tree.obj")
+
+# https://free3d.com/3d-models/lowpoly?page=5
 
 lines = file.readlines()
 file.close()
