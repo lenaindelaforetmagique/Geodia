@@ -2,6 +2,39 @@ POLY_NAMES = [];
 POLY_FUNCTIONS = [];
 
 
+
+POLY_NAMES.push("Sol de Perlin");
+POLY_FUNCTIONS.push(function(parent) {
+  let nbre = 60;
+  let dx = parent.radius / nbre * 4;
+  let dy = dx;
+  let size = nbre * dx / 20;
+
+  initPerlinNoise(-nbre * dx / 2, nbre * dx / 2, 5, -nbre * dy / 2, nbre * dy / 2, 5);
+  for (let i = 0; i < nbre; i++) {
+    for (let j = 0; j < nbre; j++) {
+      let x = i * dx - nbre * dx / 2;
+      let y = j * dy - nbre * dy / 2;
+      let r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+      // let z = 50 * Math.cos(r / size) * Math.exp(-r / size / 5);
+      let z = perlinnoise(x, y);
+      // console.log(z);
+      parent.addNode(x, y, 100 * z);
+
+    }
+  }
+
+  for (let i = 0; i < nbre - 1; i++) {
+    for (let j = 0; j < nbre - 1; j++) {
+      parent.addTriangle(i * nbre + j, (i + 1) * nbre + j + 1, (i + 1) * nbre + j, 0);
+      parent.addTriangle(i * nbre + j, i * nbre + j + 1, (i + 1) * nbre + j + 1, 0);
+    }
+  }
+
+
+});
+
+
 POLY_NAMES.push("Sapin");
 POLY_FUNCTIONS.push(function(parent) {
   let fact = parent.radius / 3;

@@ -2,21 +2,21 @@
 <html>
 
 <head>
-  <title>Low poly viewer</title>
+  <title>*.obj files viewer</title>
   <link rel="shorcut icon" href="geodia_icon.png" type="image/x-icon">
   <meta charset="utf-8">
 
   <!-- meta tags -->
   <meta name="author" content="Xavier Morin">
-  <meta name="description" content="A Geodesic grids generator.">
-  <meta name="keywords" content="map, projection, earth">
+  <meta name="description" content="A *.obj file viewer">
+  <meta name="keywords" content="obj, 3D, polygon">
 
   <!-- Open Graph protocol : http://ogp.me/ -->
-  <meta property="og:title" content="Geodia - Geodesic grid generator">
+  <meta property="og:title" content="Obj viewer">
   <meta property="og:type" content="website">
-  <meta property="og:description" content="A Geodesic grid generator.">
-  <meta property="og:url" content="https://lenaindelaforetmagique.github.io/Geodia/">
-  <meta property="og:image" content="http://lenaindelaforetmagique.github.io/Geodia/screenshot.png">
+  <meta property="og:description" content="An *.obj files viewer">
+  <meta property="og:url" content="https://lenaindelaforetmagique.github.io/Geodia/obj">
+  <meta property="og:image" content="http://lenaindelaforetmagique.github.io/Geodia/obj/screenshot.png">
 
   <!-- Style -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -26,7 +26,7 @@
 
 <body>
   <header id="header">
-    <h1>Low poly Viewer</h1>
+    <h1>Obj files viewer (low poly preferred)</h1>
     <div id="legend">Certaines fonctionnalités de ce site ne sont pas prises en compte par votre navigateur, essayez-en un meilleur : Firefox, Chrome par exemple...</div>
 
   </header>
@@ -42,6 +42,7 @@
       <a href="https://lenaindelaforetmagique.github.io/" target="_blank"> Copyright (c) 2019 Xavier Morin</a>
     </p>
   </footer>
+  <script src="perlinNoise.js"></script>
   <script src="vector3D.js"></script>
   <script src="lowPoly.js"></script>
   <script src="geom.js"></script>
