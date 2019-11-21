@@ -1,4 +1,6 @@
 // Perlin Noise generator
+print("perlin in");
+
 class PerlinNoise {
   constructor(xMin, xMax, xDiv, yMin, yMax, yDiv) {
     this.xmin = xMin;
@@ -9,10 +11,10 @@ class PerlinNoise {
     this.ydiv = yDiv;
     this.matrix = [];
 
-
+    print("1");
     this.DX = (this.xmax - this.xmin) / this.xdiv;
     this.DY = (this.ymax - this.ymin) / this.ydiv;
-
+    print("2");
     for (let i = 0; i < this.xdiv + 1; i++) {
       let newLine = [];
       for (let j = 0; j < this.ydiv + 1; j++) {
@@ -24,6 +26,7 @@ class PerlinNoise {
       }
       this.matrix.push(newLine);
     }
+    print("3");
 
   }
 
@@ -34,7 +37,7 @@ class PerlinNoise {
    * #define lerp(a0, a1, w) ((a0) + (w)*((a1) - (a0)))
    */
   lerp = function(a0, a1, w) {
-    return (1.0 - w) * a0 + w * a1;
+    return (1 - w) * a0 + w * a1;
   }
 
   // Computes the dot product of the distance and gradient vectors.
@@ -82,4 +85,4 @@ class PerlinNoise {
   }
 }
 
-document.getElementById("console").innerText += " - perlinNoise.js ok ";
+print("perlinNoise.js ok ");

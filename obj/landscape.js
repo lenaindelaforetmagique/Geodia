@@ -1,6 +1,8 @@
 POLY_NAMES = [];
 POLY_FUNCTIONS = [];
 
+print("landscape in");
+
 POLY_NAMES.push("Sol de Perlin");
 POLY_FUNCTIONS.push(function(parent) {
   let nbre = 20;
@@ -55,4 +57,4 @@ POLY_FUNCTIONS.push(function(parent) {
   }
 });
 
-document.getElementById("console").innerText += " - landscape.js ok";
+print("landscape.jsee ok");

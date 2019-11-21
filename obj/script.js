@@ -52,4 +52,4 @@ if (!refinement) {
 
 
 let u_ = new Universe(polyID, refinement);
-document.getElementById("console").innerText += " - script.js ok";
+print("script.js ok");

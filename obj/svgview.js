@@ -516,4 +516,4 @@ class ViewBox {
 
 
 }
-document.getElementById("console").innerText += " - svgview.js ok";
+print("svgview.js ok");
