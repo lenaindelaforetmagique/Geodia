@@ -54,3 +54,5 @@ POLY_FUNCTIONS.push(function(parent) {
     }
   }
 });
+
+document.getElementById("console").innerText += " - landscape.js ok";

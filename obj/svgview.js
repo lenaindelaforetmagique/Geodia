@@ -73,7 +73,7 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    var legend = this.legend.innerText; //"";
+    var legend = "";
 
     while (this.polyID < 0) {
       this.polyID += POLY_NAMES.length;
@@ -84,7 +84,7 @@ class Universe {
 
     drawPolyedre(this);
     this.updateFaces();
-    legend += "\n" + POLY_NAMES[this.polyID];
+    legend = POLY_NAMES[this.polyID];
 
     if (this.refinement > 1) {
       this.refine(this.refinement);
@@ -516,3 +516,4 @@ class ViewBox {
 
 
 }
+document.getElementById("console").innerText += " - svgview.js ok";

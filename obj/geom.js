@@ -391,3 +391,5 @@ class Quintangle extends Polygon {
 EVAL_DISTANCE = function(polygon1, polygon2) {
   return polygon1.isBefore(polygon2);
 }
+
+document.getElementById("console").innerText += " - geom.js ok";

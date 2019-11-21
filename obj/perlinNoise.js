@@ -81,3 +81,5 @@ class PerlinNoise {
     return value;
   }
 }
+
+document.getElementById("console").innerText += " - perlinNoise.js ok ";
