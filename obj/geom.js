@@ -52,6 +52,7 @@ class Edge {
 class Polygon {
   constructor(nodesList_) {
     this.nodes = nodesList_;
+    this.color = (Math.random() - 0.5) * 50 + 210;
 
     this.dom = document.createElementNS(SVGNS, 'polygon');
     // this.dom.setAttribute('fill', this.color);
@@ -70,7 +71,7 @@ class Polygon {
     let b = this.nodes[0].position.copy();
     b.add(a)
     let pos0 = PROJ_FUNCTION(b);
-    list += `${pos0[0]}, ${pos0[1]}`
+    // list += `${pos0[0]}, ${pos0[1]}`
 
     this.dom.setAttributeNS(null, "points", list);
 
@@ -80,9 +81,9 @@ class Polygon {
     let center = this.center();
 
     let color_SL = RAYTRACING_LIGHT(this.center(), this.normalVector());
-    // this.dom.setAttribute('fill', colorGeneratorRGBA(color, 0 * color, 0 * color, 1));
-    // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, 0.4));
+    // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
     this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
+    // this.dom.setAttribute('fill', colorGeneratorHSLA(this.color, color_SL[0] * 50, color_SL[1] * 40 / 3 + 30, ALPHA));
   }
 
   center() {
@@ -105,11 +106,11 @@ class Polygon {
     res = v1.crossProduct(v2);
     res.normalize();
     // sign
-    let v3 = new Vector3D(0, 0, 0);
-    v3.sub(this.center());
-    if (res.dotProduct(v3) > 0) {
-      res.mult(-1);
-    }
+    // let v3 = new Vector3D(0, 0, 0);
+    // v3.sub(this.center());
+    // if (res.dotProduct(v3) > 0) {
+    res.mult(-1);
+    // }
     return res;
 
   }
