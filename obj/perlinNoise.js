@@ -30,18 +30,12 @@ class PerlinNoise {
 
   }
 
-  /* Function to linearly interpolate between a0 and a1
-   * Weight w should be in the range [0.0, 1.0]
-   *
-   * as an alternative, this slightly faster equivalent function (macro) can be used:
-   * #define lerp(a0, a1, w) ((a0) + (w)*((a1) - (a0)))
-   */
-  lerp = function(a0, a1, w) {
+  lerp(a0, a1, w) {
     return (1 - w) * a0 + w * a1;
   }
 
   // Computes the dot product of the distance and gradient vectors.
-  dotGridGradient = function(ix, iy, x, y) {
+  dotGridGradient(ix, iy, x, y) {
 
     // Precomputed (or otherwise) gradient vectors at each grid node
 
@@ -55,7 +49,7 @@ class PerlinNoise {
 
 
   // Compute Perlin noise at coordinates x, y
-  noise = function(x, y) {
+  noise(x, y) {
     // Determine grid cell coordinates
 
     let x0 = Math.floor((x - this.xmin) / this.DX);
