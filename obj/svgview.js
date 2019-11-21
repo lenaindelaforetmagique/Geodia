@@ -83,7 +83,7 @@ class Universe {
     let drawPolyedre = POLY_FUNCTIONS[this.polyID];
 
     drawPolyedre(this);
-    this.updateFaces();
+
     legend = POLY_NAMES[this.polyID];
 
     if (this.refinement > 1) {
@@ -92,8 +92,21 @@ class Universe {
       this.refinement = 1;
     }
     legend += " - ordre " + this.refinement;
-
     this.legend.innerText = legend;
+
+
+    for (let node of this.nodes) {
+      let newZ = POLY_GROUNDS[this.polyID].altitude(node.position.x, node.position.y);
+      node.position.z = newZ;
+    }
+
+    for (let face of this.faces) {
+      let alt = face.center().z;
+      let newColor = colorFunction(face);
+      face.color = newColor;
+    }
+
+    this.updateFaces();
   }
 
   addNode(x_ = 0, y_ = 0, z_ = 0) {
@@ -160,7 +173,7 @@ class Universe {
     }
 
     for (let newNode of newNodes) {
-      newNode.position.forceNorm(this.radius);
+      // newNode.position.forceNorm(this.radius);
       this.nodes.push(newNode);
       this.nodesDom.appendChild(newNode.dom);
       newNode.show();
@@ -453,6 +466,7 @@ class Universe {
       // str += erreur;
       // thiz.console(str);
       thiz.legend.innerText += "\n" + str;
+      print(str);
     }
   }
 

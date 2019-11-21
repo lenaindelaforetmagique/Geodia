@@ -70,7 +70,7 @@ class Polygon {
     let b = this.nodes[0].position.copy();
     b.add(a)
     let pos0 = PROJ_FUNCTION(b);
-    list += `${pos0[0]}, ${pos0[1]}`
+    // list += `${pos0[0]}, ${pos0[1]}`
 
     this.dom.setAttributeNS(null, "points", list);
 
@@ -105,11 +105,11 @@ class Polygon {
     res = v1.crossProduct(v2);
     res.normalize();
     // sign
-    let v3 = new Vector3D(0, 0, 0);
-    v3.sub(this.center());
-    if (res.dotProduct(v3) > 0) {
-      res.mult(-1);
-    }
+    // let v3 = new Vector3D(0, 0, 0);
+    // v3.sub(this.center());
+    // if (res.dotProduct(v3) > 0) {
+    // res.mult(-1);
+    // }
     return res;
 
   }
@@ -159,7 +159,7 @@ class Triangle extends Polygon {
     let id = 0
     for (let i = 0; i <= n - 1; i++) {
       for (let j = 0; j < n - i; j++) {
-        let newFace = new Triangle(newNodes[id], newNodes[id + 1], newNodes[id + n + 1 - i]);
+        let newFace = new Triangle(newNodes[id], newNodes[id + n + 1 - i], newNodes[id + 1]);
         newFaces.push(newFace);
         id += 1;
       }
@@ -168,7 +168,7 @@ class Triangle extends Polygon {
     id = 0;
     for (let i = 0; i <= n - 2; i++) {
       for (let j = 0; j < n - i - 1; j++) {
-        let newFace = new Triangle(newNodes[id + 1], newNodes[id + n + 2 - i], newNodes[id + n + 1 - i]);
+        let newFace = new Triangle(newNodes[id + 1], newNodes[id + n + 1 - i], newNodes[id + n + 2 - i]);
         newFaces.push(newFace);
         id += 1;
       }
@@ -223,9 +223,9 @@ class Quadrangle extends Polygon {
       for (let j = 0; j <= n - 1; j++) {
         let newFace = new Quadrangle(
           newNodes[i * (n + 1) + j],
-          newNodes[i * (n + 1) + j + 1],
+          newNodes[(i + 1) * (n + 1) + j],
           newNodes[(i + 1) * (n + 1) + (j + 1)],
-          newNodes[(i + 1) * (n + 1) + j]
+          newNodes[i * (n + 1) + j + 1]
         );
         newFaces.push(newFace);
       }
@@ -367,10 +367,10 @@ class Quintangle extends Polygon {
         let max = newNodes.length;
         newFace = new Quintangle(
           newNodes[max - 1],
-          newNodes[max - 2],
-          newNodes[max - 3],
+          newNodes[max - 5],
           newNodes[max - 4],
-          newNodes[max - 5]
+          newNodes[max - 3],
+          newNodes[max - 2]
         );
         newFaces.push(newFace);
       }
