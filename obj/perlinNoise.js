@@ -11,10 +11,9 @@ class PerlinNoise {
     this.ydiv = yDiv;
     this.matrix = [];
 
-    print("1");
     this.DX = (this.xmax - this.xmin) / this.xdiv;
     this.DY = (this.ymax - this.ymin) / this.ydiv;
-    print("2");
+
     for (let i = 0; i < this.xdiv + 1; i++) {
       let newLine = [];
       for (let j = 0; j < this.ydiv + 1; j++) {
@@ -26,8 +25,6 @@ class PerlinNoise {
       }
       this.matrix.push(newLine);
     }
-    print("3");
-
   }
 
   lerp(a0, a1, w) {

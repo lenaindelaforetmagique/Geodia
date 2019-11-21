@@ -96,7 +96,7 @@ class Universe {
 
 
     for (let node of this.nodes) {
-      let newZ = POLY_GROUNDS[this.polyID].altitude(node.position.x, node.position.y);
+      let newZ = altitude(node.position.x, node.position.y, this.polyID);
       node.position.z = newZ;
     }
 
