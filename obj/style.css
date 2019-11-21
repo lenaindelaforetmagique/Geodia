@@ -102,8 +102,9 @@ polyline {
 
 polygon {
   /* fill: rgba(0, 0, 0, 0.1); */
-  stroke: gray;
-  stroke-width: 0.2;
+  /* stroke: gray; */
+  stroke-width: 1;
+  /* stroke-linecap: square; */
 }
 
 @media screen and (max-device-width: 600px) {

@@ -440,19 +440,20 @@ class Universe {
       thiz.viewBox.resize();
     }
 
-    // window.onerror = function(msg, source, noligne, nocolonne, erreur) {
-    //   let str = "";
-    //   str += msg;
-    //   str += " * ";
-    //   str += source;
-    //   str += " * ";
-    //   str += noligne;
-    //   str += " * ";
-    //   str += nocolonne;
-    //   str += " * ";
-    //   // str += erreur;
-    //   thiz.console(str);
-    // }
+    window.onerror = function(msg, source, noligne, nocolonne, erreur) {
+      let str = "";
+      str += msg;
+      str += " * ";
+      str += source;
+      str += " * ";
+      str += noligne;
+      str += " * ";
+      str += nocolonne;
+      str += " * ";
+      // str += erreur;
+      // thiz.console(str);
+      thiz.legend.innerText = str;
+    }
   }
 
 }

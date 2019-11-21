@@ -5,7 +5,7 @@ POLY_FUNCTIONS = [];
 
 POLY_NAMES.push("Sol de Perlin");
 POLY_FUNCTIONS.push(function(parent) {
-  let nbre = 60;
+  let nbre = 10;
   let dx = parent.radius / nbre * 8;
   let dy = dx;
 
