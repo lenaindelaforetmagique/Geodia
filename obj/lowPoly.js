@@ -5,14 +5,14 @@ POLY_FUNCTIONS = [];
 
 POLY_NAMES.push("Sol de Perlin");
 POLY_FUNCTIONS.push(function(parent) {
-  let nbre = 10;
+  let nbre = 20;
   let dx = parent.radius / nbre * 8;
   let dy = dx;
-
 
   let colorFunction = function(poly) {
     let z = poly.center().z;
     let color = 0;
+
     if (z < 1) {
       color = 180 + Math.random() * 10;
     } else {

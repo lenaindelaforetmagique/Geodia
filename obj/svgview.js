@@ -73,7 +73,7 @@ class Universe {
     this.edges = [];
     this.faces = [];
 
-    var legend = "";
+    var legend = this.legend.innerText; //"";
 
     while (this.polyID < 0) {
       this.polyID += POLY_NAMES.length;
@@ -84,7 +84,7 @@ class Universe {
 
     drawPolyedre(this);
     this.updateFaces();
-    legend = POLY_NAMES[this.polyID];
+    legend += "\n" + POLY_NAMES[this.polyID];
 
     if (this.refinement > 1) {
       this.refine(this.refinement);
@@ -452,7 +452,7 @@ class Universe {
       str += " * ";
       // str += erreur;
       // thiz.console(str);
-      thiz.legend.innerText = str;
+      thiz.legend.innerText += "\n" + str;
     }
   }
 
