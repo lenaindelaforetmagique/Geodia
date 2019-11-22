@@ -37,7 +37,6 @@ for (let i = 0; i < 10; i++) {
   POLY_NOISES.push(new PerlinNoise(-width / 1.5, width / 1.5, Math.pow(2, i + 1), -height / 1.5, height / 1.5, Math.pow(2, i + 1)));
   POLY_FACT.push(seed * 1 / Math.pow(2, i));
   POLY_FUNCTIONS.push(function(parent) {
-
     let nbre = 4;
     let dx = width / (nbre - 1);
     let dy = height / (nbre - 1);
@@ -52,7 +51,6 @@ for (let i = 0; i < 10; i++) {
         // parent.last.color=
       }
     }
-
     for (let i = 0; i < nbre - 1; i++) {
       for (let j = 0; j < nbre - 1; j++) {
         parent.addTriangle(i * nbre + j, (i + 1) * nbre + j, (i + 1) * nbre + j + 1, 0);
@@ -61,6 +59,27 @@ for (let i = 0; i < 10; i++) {
       }
     }
   });
+
+  // POLY_FUNCTIONS.push(function(parent) {
+  //   let nbre = 6;
+  //   let dx = width / (nbre - 1);
+  //   let dy = height / (nbre - 1);
+  //   let r = width / 1.55;
+  //
+  //
+  //   parent.addNode(0, 0, 0);
+  //   for (let i = 0; i < nbre; i++) {
+  //     parent.addNode(r * Math.cos(i * Math.PI * 2 / nbre), r * Math.sin(i * Math.PI * 2 / nbre), 0);
+  //   }
+  //
+  //
+  //   for (let i = 0; i < nbre; i++) {
+  //     parent.addTriangle(0, i + 1, i < nbre - 1 ? i + 2 : 1, 0);
+  //   }
+  //
+  //   // parent.addTriangle(0, 1, 2, 0);
+  //
+  // });
 
 }
 
