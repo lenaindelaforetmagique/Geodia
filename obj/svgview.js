@@ -190,13 +190,22 @@ class Universe {
 
 
   updateFaces() {
+
+    let camPos = EVAL_DISTANCE = function(polygon1, polygon2) {
+      return polygon1.isBefore(polygon2);
+    }
+
+
     this.faces.sort(EVAL_DISTANCE);
     while (this.facesDom.firstChild != null) {
       this.facesDom.removeChild(this.facesDom.firstChild);
     }
+
     for (let face of this.faces) {
+      // if (face.isVisible()) {
       this.facesDom.appendChild(face.dom);
       face.show();
+      // }
     }
 
   }

@@ -12,7 +12,7 @@ let colorFunction = function(poly) {
   if (z < -49) {
     color = 180 + Math.random() * 10;
   } else {
-    color = 100 + (10 - 120) / 300 * z + Math.random() * 20;
+    color = 65 + (10 - 100) / 300 * z + Math.random() * 20;
   }
   return color
 };
@@ -34,8 +34,9 @@ let seed = 1; //Math.random();
 // POLY_
 for (let i = 0; i < 10; i++) {
   POLY_NAMES.push("Sol de Perlin " + (i + 1));
-  POLY_NOISES.push(new PerlinNoise(-width / 1.5, width / 1.5, Math.pow(2, i + 1), -height / 1.5, height / 1.5, Math.pow(2, i + 1)));
-  POLY_FACT.push(seed * 1 / Math.pow(2, i));
+  POLY_NOISES.push(new PerlinNoise(-width / 1.5, width / 1.5, Math.pow(2, i + 2), -height / 1.5, height / 1.5, Math.pow(2, i + 2)));
+  POLY_FACT.push((Math.random() + 1) / 2 * 1 / Math.pow(2, i));
+  // POLY_FACT.push(Math.random());
   POLY_FUNCTIONS.push(function(parent) {
     let nbre = 4;
     let dx = width / (nbre - 1);

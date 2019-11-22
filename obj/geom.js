@@ -122,6 +122,11 @@ class Polygon {
     return res;
   }
 
+
+  isVisible() {
+    return (PROJ_FUNCTION(this.center())[2] < PROJ_RR);
+  }
+
 }
 
 class Triangle extends Polygon {
