@@ -1,7 +1,9 @@
 ALPHA = 1;
 
 class Node {
-  constructor(x_ = 0, y_ = 0, z_ = 0, id) {
+  constructor(parent_, x_ = 0, y_ = 0, z_ = 0, id) {
+    this.parent = parent_;
+    // console.log(this.parent);
     this.position = new Vector3D(x_, y_, z_);
 
     this.size = 5;
@@ -20,7 +22,7 @@ class Node {
   }
 
   show() {
-    var position = PROJ_FUNCTION(this.position);
+    var position = this.parent.camera.PROJ_FUNCTION(this.position);
     this.domEl.setAttribute('cx', position[0]);
     this.domEl.setAttribute('cy', position[1]);
     this.domTx.setAttributeNS(null, "x", position[0]);
@@ -29,7 +31,8 @@ class Node {
 }
 
 class Edge {
-  constructor(n1, n2) {
+  constructor(parent_, n1, n2) {
+    this.parent = parent_;
     this.node1 = n1;
     this.node2 = n2;
 
@@ -38,8 +41,8 @@ class Edge {
   }
 
   show() {
-    var pos1 = PROJ_FUNCTION(this.node1.position);
-    var pos2 = PROJ_FUNCTION(this.node2.position);
+    var pos1 = this.parent.camera.PROJ_FUNCTION(this.node1.position);
+    var pos2 = this.parent.camera.PROJ_FUNCTION(this.node2.position);
     let list = `${pos1[0]}, ${pos1[1]}, ${pos2[0]}, ${pos2[1]} `;
 
     this.dom.setAttributeNS(null, "points", list);
@@ -50,7 +53,8 @@ class Edge {
 
 
 class Polygon {
-  constructor(nodesList_) {
+  constructor(parent_, nodesList_) {
+    this.parent = parent_;
     this.nodes = nodesList_;
     this.color = 0;
 
@@ -60,17 +64,14 @@ class Polygon {
 
   show() {
     let list = "";
-    let a = this.normalVector().copy();
-    a.mult(PROJ_EXPLODE);
     for (let node of this.nodes) {
       let b = node.position.copy();
-      b.add(a)
-      let pos = PROJ_FUNCTION(b);
+      // console.log("parent", this.parent);
+      let pos = this.parent.camera.PROJ_FUNCTION(b);
       list += `${pos[0]}, ${pos[1]}, `;
     }
     let b = this.nodes[0].position.copy();
-    b.add(a)
-    let pos0 = PROJ_FUNCTION(b);
+    let pos0 = this.parent.camera.PROJ_FUNCTION(b);
     // list += `${pos0[0]}, ${pos0[1]}`
 
     this.dom.setAttributeNS(null, "points", list);
@@ -80,7 +81,7 @@ class Polygon {
     let gamma = 0.75;
     let center = this.center();
 
-    let color_SL = RAYTRACING_LIGHT(this.center(), this.normalVector());
+    let color_SL = this.parent.raytracing.light(this.center(), this.normalVector());
     // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
     // this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
     this.dom.setAttribute('fill', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
@@ -117,21 +118,16 @@ class Polygon {
   }
 
   isBefore(other) {
-    let res = PROJ_FUNCTION(this.center())[2];
-    res -= PROJ_FUNCTION(other.center())[2];
+    let res = this.parent.camera.PROJ_FUNCTION(this.center())[2];
+    res -= this.parent.camera.PROJ_FUNCTION(other.center())[2];
     return res;
-  }
-
-
-  isVisible() {
-    return (PROJ_FUNCTION(this.center())[2] < PROJ_RR);
   }
 
 }
 
 class Triangle extends Polygon {
-  constructor(n1, n2, n3) {
-    super([n1, n2, n3]);
+  constructor(parent_, n1, n2, n3) {
+    super(parent_, [n1, n2, n3]);
 
     this.node1 = n1;
     this.node2 = n2;
@@ -152,7 +148,7 @@ class Triangle extends Polygon {
 
     for (let i = 0; i <= n; i++) {
       for (let j = 0; j <= n - i; j++) {
-        let newNode = new Node();
+        let newNode = new Node(this.parent);
         let dx = ux.copy();
         dx.mult(i);
         let dy = uy.copy();
@@ -166,7 +162,7 @@ class Triangle extends Polygon {
     let id = 0
     for (let i = 0; i <= n - 1; i++) {
       for (let j = 0; j < n - i; j++) {
-        let newFace = new Triangle(newNodes[id], newNodes[id + n + 1 - i], newNodes[id + 1]);
+        let newFace = new Triangle(this.parent, newNodes[id], newNodes[id + n + 1 - i], newNodes[id + 1]);
         newFaces.push(newFace);
         id += 1;
       }
@@ -175,7 +171,7 @@ class Triangle extends Polygon {
     id = 0;
     for (let i = 0; i <= n - 2; i++) {
       for (let j = 0; j < n - i - 1; j++) {
-        let newFace = new Triangle(newNodes[id + 1], newNodes[id + n + 1 - i], newNodes[id + n + 2 - i]);
+        let newFace = new Triangle(this.parent, newNodes[id + 1], newNodes[id + n + 1 - i], newNodes[id + n + 2 - i]);
         newFaces.push(newFace);
         id += 1;
       }
@@ -187,8 +183,8 @@ class Triangle extends Polygon {
 }
 
 class Quadrangle extends Polygon {
-  constructor(n1, n2, n3, n4) {
-    super([n1, n2, n3, n4]);
+  constructor(parent_, n1, n2, n3, n4) {
+    super(parent_, [n1, n2, n3, n4]);
     this.node1 = n1;
     this.node2 = n2;
     this.node3 = n3;
@@ -202,7 +198,7 @@ class Quadrangle extends Polygon {
 
     for (let i = 0; i <= n; i++) {
       for (let j = 0; j <= n; j++) {
-        let newNode = new Node(0, 0, 0, i + "+" + j);
+        let newNode = new Node(this.parent, 0, 0, 0, i + "+" + j);
         tmp = this.node1.position.copy();
         tmp.mult(1 - i / n);
         tmp.mult(1 - j / n);
@@ -228,7 +224,7 @@ class Quadrangle extends Polygon {
     }
     for (let i = 0; i <= n - 1; i++) {
       for (let j = 0; j <= n - 1; j++) {
-        let newFace = new Quadrangle(
+        let newFace = new Quadrangle(this.parent,
           newNodes[i * (n + 1) + j],
           newNodes[(i + 1) * (n + 1) + j],
           newNodes[(i + 1) * (n + 1) + (j + 1)],
@@ -243,8 +239,8 @@ class Quadrangle extends Polygon {
 }
 
 class Quintangle extends Polygon {
-  constructor(n1, n2, n3, n4, n5) {
-    super([n1, n2, n3, n4, n5]);
+  constructor(parent_, n1, n2, n3, n4, n5) {
+    super(parent_, [n1, n2, n3, n4, n5]);
   }
 
   refine(n) {
@@ -273,7 +269,7 @@ class Quintangle extends Polygon {
             dj = 0.5;
           }
           // this.nodes[k].position + i * uy + j * ux
-          let newNode = new Node(0, 0, 0, "5");
+          let newNode = new Node(this.parent, 0, 0, 0, "5");
           let tmpX = vectUx.copy();
           tmpX.mult(j + dj);
           let tmpY = vectUy.copy();
@@ -287,7 +283,7 @@ class Quintangle extends Polygon {
       }
     }
     if (n > 0 && n % 3 == 0) {
-      let newNode = new Node(0, 0, 0);
+      let newNode = new Node(this.parent, 0, 0, 0);
       newNode.position = center.copy();
       newNodes.push(newNode);
     }
@@ -298,7 +294,7 @@ class Quintangle extends Polygon {
     while (n > 0) {
       // type 1 : sommets
       if (n != 1) {
-        newFace = new Quintangle(
+        newFace = new Quintangle(this.parent,
           newNodes[5 * n - 1 + offset],
           newNodes[0 + offset],
           newNodes[1 + offset],
@@ -307,7 +303,7 @@ class Quintangle extends Polygon {
         );
         newFaces.push(newFace);
         for (let k = 1; k < 5; k++) {
-          newFace = new Quintangle(
+          newFace = new Quintangle(this.parent,
             newNodes[k * n - 1 + offset],
             newNodes[k * n + offset],
             newNodes[k * n + 1 + offset],
@@ -321,7 +317,7 @@ class Quintangle extends Polygon {
       // type 2 : bas
       for (let i = 0; i <= n - 3; i++) {
         for (let k = 0; k < 5; k++) {
-          newFace = new Quintangle(
+          newFace = new Quintangle(this.parent,
             newNodes[k * n + i + 1 + offset],
             newNodes[k * n + i + 2 + offset],
             newNodes[5 * n + k * (n - 1) + i + 1 + offset],
@@ -334,7 +330,7 @@ class Quintangle extends Polygon {
 
       // type 3 : contre-sommet
       if (n >= 3) {
-        newFace = new Quintangle(
+        newFace = new Quintangle(this.parent,
           newNodes[5 * n + 5 * (n - 1) - 1 + offset],
           newNodes[5 * n + offset],
           newNodes[5 * n + 5 * (n - 1) + offset],
@@ -344,7 +340,7 @@ class Quintangle extends Polygon {
         newFaces.push(newFace);
 
         for (let k = 1; k < 5; k++) {
-          newFace = new Quintangle(
+          newFace = new Quintangle(this.parent,
             newNodes[5 * n + k * (n - 1) - 1 + offset],
             newNodes[5 * n + k * (n - 1) + offset],
             newNodes[5 * n + 5 * (n - 1) + k * (n - 2) + offset],
@@ -358,7 +354,7 @@ class Quintangle extends Polygon {
       // type 4 : haut
       for (let k = 0; k < 5; k++) {
         for (let i = 1; i <= n - 3; i++) {
-          newFace = new Quintangle(
+          newFace = new Quintangle(this.parent,
             newNodes[5 * n + k * (n - 1) + i + offset],
             newNodes[5 * n + 5 * (n - 1) + (k * (n - 2) + i) % (5 * (n - 2)) + offset],
             newNodes[5 * n + 5 * (n - 1) + 5 * (n - 2) + (k * (n - 3) + i) % (5 * (n - 3)) + offset],
@@ -372,7 +368,7 @@ class Quintangle extends Polygon {
       // type 5 : calotte
       if (n == 1 || n == 2) {
         let max = newNodes.length;
-        newFace = new Quintangle(
+        newFace = new Quintangle(this.parent,
           newNodes[max - 1],
           newNodes[max - 5],
           newNodes[max - 4],

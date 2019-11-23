@@ -38,24 +38,24 @@ function getQueryVariable(variable) {
 
 let polyID = getQueryVariable("polyID");
 if (!polyID) {
-  polyID = 4;
+  polyID = 0;
 } else {
   polyID = parseInt(polyID);
 }
 
 let refinement = getQueryVariable("refinement");
 if (!refinement) {
-  refinement = 4;
+  refinement = 0;
 } else {
   refinement = parseInt(refinement);
 }
 
-
-PROJ_LAMBDA = 40;
-PROJ_PHI = 45 + 180;
-PROJ_RR = 250;
-PROJ_D = 1000;
-PROJ_UPDATE_VECTORS();
-
 let u_ = new Universe(polyID, refinement);
+
+var updateCB = function(timestamp) {
+  u_.refresh(timestamp);
+  window.requestAnimationFrame(updateCB);
+};
+updateCB(0);
+
 print("script.js ok");
