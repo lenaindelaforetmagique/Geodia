@@ -4,7 +4,7 @@ class Landscape {
     this.width = width_;
     this.height = height_;
     this.order = order_;
-    this.name = "Sol de Perlin à l'ordre - " + order;
+    this.name = "Sol de Perlin à l'ordre - " + this.order;
 
     this.factors = [];
     this.noises = [];
@@ -13,7 +13,6 @@ class Landscape {
       this.factors.push((Math.random() + 1) / 2 * 1 / Math.pow(2, i));
       this.noises.push(new PerlinNoise(-this.width / 1.5, this.width / 1.5, Math.pow(2, i + 2), -this.height / 1.5, this.height / 1.5, Math.pow(2, i + 2)));
     }
-
   }
 
   altitude(x, y, order) {

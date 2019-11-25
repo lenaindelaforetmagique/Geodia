@@ -23,7 +23,7 @@ wait = function(timeMS) {
 }
 
 class Universe {
-  constructor(polyID_ = 0, refinement_ = 1) {
+  constructor(order_ = 0, refinement_ = 1) {
     this.container = document.getElementById("container");
     this.lb = document.getElementById("aleft");
     this.rb = document.getElementById("aright");
@@ -34,20 +34,23 @@ class Universe {
     this.dom = document.createElementNS(SVGNS, "svg");
 
     this.radius = 0.75;
+
     this.container.appendChild(this.dom);
 
     this.viewBox = new ViewBox(this.dom, this.radius);
     this.camera = new Camera(this);
-    this.camera.position.x = -400 * 0;
-    this.camera.position.y = 0;
     this.raytracing = new Raytracing(this);
+
+    this.width = 800;
+    this.height = 800;
+    this.landscape = new Landscape(this.width, this.height, 5);
+
     // console.log(this.camera);
 
     this.nodes = [];
-    this.edges = [];
     this.faces = [];
 
-    this.polyID = polyID_;
+    this.order = order_;
     this.refinement = refinement_;
 
     let header = document.getElementById("header");
@@ -60,7 +63,7 @@ class Universe {
     this.addEvents();
   }
 
-  init() {
+  domInit() {
     // clean everything
     while (this.dom.firstChild != null) {
       this.dom.removeChild(this.dom.firstChild);
@@ -68,48 +71,77 @@ class Universe {
 
     this.nodesDom = document.createElementNS(SVGNS, 'g');
     this.facesDom = document.createElementNS(SVGNS, 'g');
-    this.edgesDom = document.createElementNS(SVGNS, 'g');
 
     this.dom.appendChild(this.facesDom);
-    this.dom.appendChild(this.edgesDom);
     this.dom.appendChild(this.nodesDom);
+  }
+
+  init() {
+    this.domInit();
 
     this.nodes = [];
-    this.edges = [];
     this.faces = [];
 
     var legend = "";
 
-    while (this.polyID < 0) {
-      this.polyID += POLY_NAMES.length;
+    while (this.order < 0) {
+      this.order += POLY_NAMES.length;
     }
-    this.polyID = this.polyID % POLY_NAMES.length;
+    this.order = this.order % POLY_NAMES.length;
 
-    let drawPolyedre = POLY_FUNCTIONS[this.polyID];
+    // -- Sol de base --
+    let nbre = 2;
+    let dx = this.width / (nbre - 1);
+    let dy = this.height / (nbre - 1);
+    for (let i = 0; i < nbre; i++) {
+      for (let j = 0; j < nbre; j++) {
+        let x = i * dx - this.width / 2;
+        let y = j * dy - this.height / 2;
+        let z = this.landscape.altitude(x, y, this.order);
+        this.addNode(x, y, 0);
+      }
+    }
 
-    drawPolyedre(this);
+    for (let i = 0; i < nbre - 1; i++) {
+      for (let j = 0; j < nbre - 1; j++) {
+        this.addTriangle(i * nbre + j, (i + 1) * nbre + j, (i + 1) * nbre + j + 1, 0);
+        this.addTriangle(i * nbre + j, (i + 1) * nbre + j + 1, i * nbre + j + 1, 0);
+      }
+    }
+    // -- fin sol de base --
 
-    legend = POLY_NAMES[this.polyID];
-
+    // -- début raffinement --
     if (this.refinement > 1) {
-      this.refine(this.refinement);
+      // this.refine(this.refinement);
     } else {
       this.refinement = 1;
     }
     legend += " - ordre " + this.refinement;
+
+    let oldLength = this.faces.length;
+    let newLength = 0;
+    // console.log("débutWHile");
+    // while (oldLength != newLength) {
+    //   console.log(oldLength, newLength);
+    //   oldLength = newLength;
+    //   this.refine();
+    //   newLength = this.faces.length;
+    // }
+    // console.log("finWHile");
+    // -- fin raffinement --
+
+
+    // -- calcul des Z --
     this.legend.innerText = legend;
-
-
     for (let node of this.nodes) {
-      let newZ = altitude(node.position.x, node.position.y, this.polyID);
+      let newZ = this.landscape.altitude(node.position.x, node.position.y, this.order);
       node.position.z = newZ;
     }
 
     for (let face of this.faces) {
-      let alt = face.center().z;
-      let newColor = colorFunction(face);
-      face.color = newColor;
+      face.color = this.landscape.colorFunction(face.center());;
     }
+    // -- fin calcul des Z --
 
     this.updateFaces();
   }
@@ -147,14 +179,6 @@ class Universe {
     newNode.show();
   }
 
-  addEdge(id1, id2, offset = 0) {
-    let thiz = this;
-    let newEdge = new Edge(thiz, this.nodes[id1 + offset], this.nodes[id2 + offset]);
-    this.edges.push(newEdge);
-    this.edgesDom.appendChild(newEdge.dom);
-    newEdge.show();
-  }
-
   addTriangle(id1, id2, id3, offset = 0) {
     let thiz = this;
     let newTriangle = new Triangle(thiz, this.nodes[id1 + offset], this.nodes[id2 + offset], this.nodes[id3 + offset]);
@@ -185,26 +209,33 @@ class Universe {
   }
 
 
-  refine(face) {
-
-  }
-
-  refine(n) {
+  refine() {
     let newNodes = [];
     let newFaces = [];
     for (let face of this.faces) {
-      // let face = this.faces.last();
-      let res = face.refine(n);
-      newNodes = newNodes.concat(res[0]);
-      newFaces = newFaces.concat(res[1]);
+      // console.log(face.radius(), distance(face.center(), this.camera.position));
+      if (face.radius() / distance(face.center(), this.camera.position) > 1 / 1) {
+        // console.log("oui");
+        let res = face.refine(2);
+        newNodes = newNodes.concat(res[0]);
+        newFaces = newFaces.concat(res[1]);
+      } else {
+        // console.log("non");
+        newNodes = newNodes.concat(face.nodes);
+        newFaces = newFaces.concat([face]);
+      }
     }
 
+    // console.log(newFaces.length);
+
+    this.nodes = [];
     for (let newNode of newNodes) {
       // newNode.position.forceNorm(this.radius);
       this.nodes.push(newNode);
-      this.nodesDom.appendChild(newNode.dom);
+      // this.nodesDom.appendChild(newNode.dom);
       newNode.show();
     }
+
 
     this.faces = [];
     for (let newFace of newFaces) {
@@ -212,8 +243,27 @@ class Universe {
       this.facesDom.appendChild(newFace.dom);
       newFace.show();
     }
+    // this.updateFaces();
+  }
+
+
+  update() {
+    if (this.recal) {
+      this.init();
+      let newZ = this.landscape.altitude(this.camera.position.x, this.camera.position.y, this.order);
+      this.camera.position.z = newZ + 25;
+      this.recal = false;
+    }
+
+    // this.camera.position
+    // this.camera.update();
+    //
+    // for (let node of this.nodes) {
+    //   node.show();
+    // }
     this.updateFaces();
   }
+
 
 
   updateFaces() {
@@ -221,14 +271,15 @@ class Universe {
     let EVAL_DISTANCE = function(polygon1, polygon2) {
       return polygon1.isBefore(polygon2);
     }
-
     this.faces.sort(EVAL_DISTANCE);
+
     while (this.facesDom.firstChild != null) {
       this.facesDom.removeChild(this.facesDom.firstChild);
     }
 
     for (let face of this.faces) {
       if (this.camera.isVisible(face)) {
+        face.color = this.landscape.colorFunction(face.center());;
         this.facesDom.appendChild(face.dom);
         face.show();
       }
@@ -236,27 +287,14 @@ class Universe {
 
   }
 
-  update() {
-    let newZ = altitude(this.camera.position.x, this.camera.position.y, this.polyID);
-    this.camera.position.z = newZ + 25;
-    // this.camera.position
-    // this.camera.update();
-    //
-    // for (let node of this.nodes) {
-    //   node.show();
-    // }
-    // for (let edge of this.edges) {
-    //   edge.show();
-    // }
-    this.updateFaces();
-  }
-
   moveLong(intensity = 1) {
     this.camera.moveZ(intensity);
+    this.recal = true;
   }
 
   moveLat(intensity = 1) {
     this.camera.moveX(intensity);
+    this.recal = true;
   }
 
   addEvents() {
@@ -266,11 +304,11 @@ class Universe {
       // console.log(e.key);
       switch (e.key.toUpperCase()) {
         case "ARROWLEFT":
-          thiz.polyID -= 1;
+          thiz.order -= 1;
           thiz.init();
           break;
         case "ARROWRIGHT":
-          thiz.polyID += 1;
+          thiz.order += 1;
           thiz.init();
           break;
         case "ARROWUP":
@@ -377,74 +415,14 @@ class Universe {
     }, false);
 
 
-    // drag
-    this.dragged = null;
-    // this.container.addEventListener("drag", function(event) {
-    //   console.log("drag", event);
-    //
-    // }, false);
-    //
-    // this.container.addEventListener("dragstart", function(event) {
-    //   console.log("dragstart", event);
-    //   // Stocke une référence sur l'objet glissable
-    //   dragged = event.target;
-    //   // transparence 50%
-    //   event.target.style.opacity = .5;
-    // }, false);
-    //
-    // this.container.addEventListener("dragend", function(event) {
-    //   console.log("dragend", event);
-    //   // réinitialisation de la transparence
-    //   event.target.style.opacity = "";
-    // }, false);
-
-    /* Les événements sont déclenchés sur les cibles du drop */
-    this.container.addEventListener("dragover", function(event) {
-      // console.log("dragover", event);
-      // Empêche le comportement par défaut afin d'autoriser le drop
-      event.preventDefault();
-    }, false);
-
-    // this.container.addEventListener("dragenter", function(event) {
-    //   console.log("dragenter", event);
-    //   // Met en surbrillance la cible de drop potentielle lorsque l'élément glissable y entre
-    //   if (event.target.className == "dropzone") {
-    //     event.target.style.background = "purple";
-    //   }
-    //
-    // }, false);
-    //
-    // this.container.addEventListener("dragleave", function(event) {
-    //   console.log("dragleave", event);
-    //   // réinitialisation de l'arrière-plan des potentielles cible du drop lorsque les éléments glissables les quittent
-    //   if (event.target.className == "dropzone") {
-    //     event.target.style.background = "";
-    //   }
-    //
-    // }, false);
-
-    this.container.addEventListener("drop", function(event) {
-      console.log("drop", event);
-      // Empêche l'action par défaut (ouvrir comme lien pour certains éléments)
-      event.preventDefault();
-      // Déplace l'élément traîné vers la cible du drop sélectionnée
-      if (event.target.className == "dropzone") {
-        event.target.style.background = "";
-        dragged.parentNode.removeChild(dragged);
-        event.target.appendChild(dragged);
-      }
-
-    }, false);
-
-
     // BUTTONs Events
     this.lb.onclick = function() {
-      thiz.polyID -= 1;
+      thiz.order -= 1;
       thiz.init();
     };
 
     this.rb.onclick = function() {
-      thiz.polyID += 1;
+      thiz.order += 1;
       thiz.init();
     };
 

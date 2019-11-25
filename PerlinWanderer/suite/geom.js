@@ -23,10 +23,10 @@ class Node {
 
   show() {
     var position = this.parent.camera.PROJ_FUNCTION(this.position);
-    this.domEl.setAttribute('cx', position[0]);
-    this.domEl.setAttribute('cy', position[1]);
-    this.domTx.setAttributeNS(null, "x", position[0]);
-    this.domTx.setAttributeNS(null, "y", position[1]);
+    // this.domEl.setAttribute('cx', position[0]);
+    // this.domEl.setAttribute('cy', position[1]);
+    // this.domTx.setAttributeNS(null, "x", position[0]);
+    // this.domTx.setAttributeNS(null, "y", position[1]);
   }
 }
 
@@ -86,6 +86,20 @@ class Polygon {
     // this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
     this.dom.setAttribute('fill', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
     this.dom.setAttribute('stroke', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
+  }
+
+  radius() {
+    let res;
+    let v1 = this.nodes[1].position.copy();
+    v1.sub(this.nodes[0].position);
+    // v1.normalize();
+    let v2 = this.nodes[2].position.copy();
+    v2.sub(this.nodes[0].position);
+    // v2.normalize();
+    res = v1.crossProduct(v2);
+    res = res.norm() / 2;
+    res = Math.sqrt(res);
+    return res;
   }
 
   center() {
