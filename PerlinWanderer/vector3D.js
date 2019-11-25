@@ -113,18 +113,3 @@ distance = function(vect1, vect2) {
   res.sub(vect2);
   return res.norm();
 }
-
-// angle = function(vect1, vect2) {
-//   // returns the angle between vect1 and vect2
-//   let v1 = vect1.copy();
-//   let v2 = vect2.copy();
-//   v1.normalize();
-//   v2.normalize();
-//   let sin = v1.crossProduct(v2);
-//   let cos = v1.dotProduct(v2);
-//   let theta = Math.acos(cos);
-//   if (sin < 0) {
-//     theta *= -1;
-//   }
-//   return theta;
-// }

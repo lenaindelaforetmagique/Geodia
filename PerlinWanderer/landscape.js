@@ -30,7 +30,6 @@ altitude = function(x, y, order) {
 let width = 800;
 let height = 800;
 let seed = 1; //Math.random();
-
 // POLY_
 for (let i = 0; i < 10; i++) {
   POLY_NAMES.push("Sol de Perlin " + (i + 1));

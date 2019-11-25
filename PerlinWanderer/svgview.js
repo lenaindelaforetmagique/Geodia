@@ -33,10 +33,15 @@ class Universe {
 
     this.dom = document.createElementNS(SVGNS, "svg");
 
-    this.radius = 200;
+    this.radius = 0.75;
     this.container.appendChild(this.dom);
 
     this.viewBox = new ViewBox(this.dom, this.radius);
+    this.camera = new Camera(this);
+    this.camera.position.x = -400 * 0;
+    this.camera.position.y = 0;
+    this.raytracing = new Raytracing(this);
+    // console.log(this.camera);
 
     this.nodes = [];
     this.edges = [];
@@ -50,7 +55,7 @@ class Universe {
     // console.log(this.viewBox.fact);
     this.viewBox.translate(-window.innerWidth / 2, -(footer.offsetTop + header.offsetTop + header.offsetHeight) / 2);
 
-
+    this.lastUpdate = Date.now();
     this.init();
     this.addEvents();
   }
@@ -109,15 +114,28 @@ class Universe {
     this.updateFaces();
   }
 
+
+  refresh() {
+    let now = Date.now();
+    if (now - this.lastUpdate > 20) {
+      this.lastUpdate = now;
+      this.update();
+      // console.log("hop");
+      // this.show();
+    }
+  }
+
   addNode(x_ = 0, y_ = 0, z_ = 0) {
-    let newNode = new Node(x_, y_, z_, this.nodes.length);
+    let thiz = this;
+    let newNode = new Node(thiz, x_, y_, z_, this.nodes.length);
     this.nodes.push(newNode);
     this.nodesDom.appendChild(newNode.dom);
     newNode.show();
   }
 
   addNode_COG(nodeList, offset) {
-    let newNode = new Node(0, 0, 0, this.nodes.length);
+    let thiz = this;
+    let newNode = new Node(thiz, 0, 0, 0, this.nodes.length);
     // let nodePos = new Vector3D(0,0,0);
     for (let i of nodeList) {
       newNode.position.add(this.nodes[i + offset].position);
@@ -130,19 +148,22 @@ class Universe {
   }
 
   addEdge(id1, id2, offset = 0) {
-    let newEdge = new Edge(this.nodes[id1 + offset], this.nodes[id2 + offset]);
+    let thiz = this;
+    let newEdge = new Edge(thiz, this.nodes[id1 + offset], this.nodes[id2 + offset]);
     this.edges.push(newEdge);
     this.edgesDom.appendChild(newEdge.dom);
     newEdge.show();
   }
 
   addTriangle(id1, id2, id3, offset = 0) {
-    let newTriangle = new Triangle(this.nodes[id1 + offset], this.nodes[id2 + offset], this.nodes[id3 + offset]);
+    let thiz = this;
+    let newTriangle = new Triangle(thiz, this.nodes[id1 + offset], this.nodes[id2 + offset], this.nodes[id3 + offset]);
     this.faces.push(newTriangle);
   }
 
   addQuadrangle(id1, id2, id3, id4, offset = 0) {
-    let newQuadrangle = new Quadrangle(
+    let thiz = this;
+    let newQuadrangle = new Quadrangle(thiz,
       this.nodes[id1 + offset],
       this.nodes[id2 + offset],
       this.nodes[id3 + offset],
@@ -152,7 +173,8 @@ class Universe {
   }
 
   addQuintangle(id1, id2, id3, id4, id5, offset = 0) {
-    let newQuintangle = new Quintangle(
+    let thiz = this;
+    let newQuintangle = new Quintangle(thiz,
       this.nodes[id1 + offset],
       this.nodes[id2 + offset],
       this.nodes[id3 + offset],
@@ -202,15 +224,20 @@ class Universe {
     }
 
     for (let face of this.faces) {
-      // if (face.isVisible()) {
-      this.facesDom.appendChild(face.dom);
-      face.show();
-      // }
+      if (this.camera.isVisible(face)) {
+        this.facesDom.appendChild(face.dom);
+        face.show();
+      }
     }
 
   }
 
   update() {
+    let newZ = altitude(this.camera.position.x, this.camera.position.y, this.polyID);
+    this.camera.position.z = newZ + 15;
+    // this.camera.position
+    // this.camera.update();
+
     for (let node of this.nodes) {
       node.show();
     }
@@ -218,7 +245,14 @@ class Universe {
       edge.show();
     }
     this.updateFaces();
+  }
 
+  moveLong(intensity = 1) {
+    this.camera.moveZ(intensity);
+  }
+
+  moveLat(intensity = 1) {
+    this.camera.moveX(intensity);
   }
 
   addEvents() {
@@ -251,6 +285,22 @@ class Universe {
           ALPHA = Math.max(0, ALPHA - 0.05);
           thiz.update();
           break;
+        case "S":
+          // thiz.camera.rotate_uz(-1);
+          thiz.moveLat(-1);
+          break;
+        case "F":
+          // thiz.camera.rotate_uz(+1);
+          thiz.moveLat(1);
+          break;
+        case "D":
+          // thiz.camera.rotate_ux(-1);
+          thiz.moveLong(1);
+          break;
+        case "E":
+          // thiz.camera.rotate_ux(+1);
+          thiz.moveLong(-1);
+          break;
         default:
           // console.log(e);
           break;
@@ -261,7 +311,7 @@ class Universe {
     this.container.addEventListener("mousedown", function(e) {
       e.preventDefault();
       if (e.ctrlKey) {
-        // thiz.addNode(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
+        // thiz.addNode(this,thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
       } else {
         // thiz.addPoint(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
       }
@@ -272,24 +322,42 @@ class Universe {
       // console.log(e);
       if (e.buttons > 0) {
         // console.log(e);
-        if (e.ctrlKey) {
-          RAYTRACING_CHANGE_PHI(-e.movementX / 10);
-          RAYTRACING_CHANGE_LAMBDA(e.movementY / 10);
+        if (e.altKey) {
+          thiz.raytracing.change_phi(-e.movementX / 10);
+          thiz.raytracing.change_lambda(e.movementY / 10);
         } else if (e.shiftKey) {
-          PROJ_CHANGE_D(e.movementX + e.movementY);
-        } else if (e.altKey) {
-          PROJ_CHANGE_EXPLODE(e.movementX + e.movementY);
+          thiz.camera.change_d(e.movementX + e.movementY);
         } else {
-          PROJ_CHANGE_PHI(-e.movementX / 10);
-          PROJ_CHANGE_LAMBDA(e.movementY / 10);
+          // thiz.camera.change_phi(-e.movementX / 10);
+          // thiz.camera.change_lambda(e.movementY / 10);
+
         }
-        thiz.update();
+        // thiz.update();
 
         // thiz.addNode(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
       } else {
+        thiz.camera.set_lat(e.clientY / window.innerHeight);
+        thiz.camera.set_long(e.clientX / window.innerWidth);
+
+        // thiz.camera.rotate_ux(e.movementY / 2);
+        // thiz.camera.rotate_Z(e.movementX / 2);
+
+
+        // thiz.camera.change_lambda(e.movementY / 10);
         // thiz.addPoint(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
       }
     }, false);
+
+
+    // document.addEventListener("mouseover", function(e) {
+    //
+    //   thiz.camera.rotate_ux(thiz.viewBox.realY(e.clientY));
+    //   thiz.camera.rotate_Z(thiz.viewBox.realX(e.clientX));
+    //   // thiz.camera.rotate_ux(e.movementY / 10);
+    //   // thiz.camera.rotate_Z(e.movementX / 10);
+    //   e.preventDefault();
+    // }, false);
+
 
     document.addEventListener("mouseup", function(e) {
       e.preventDefault();
@@ -432,11 +500,11 @@ class Universe {
       if (thiz.prevPos != null) {
         if (e.touches.length > 1) {
           if (thiz.prevPos.size > 0) {
-            PROJ_CHANGE_EXPLODE(-(curPos.x - thiz.prevPos.x + curPos.y - thiz.prevPos.y));
+            // thiz.camera.CHANGE_EXPLODE(-(curPos.x - thiz.prevPos.x + curPos.y - thiz.prevPos.y));
           }
         } else {
-          PROJ_CHANGE_PHI(-(curPos.x - thiz.prevPos.x) / 10);
-          PROJ_CHANGE_LAMBDA((curPos.y - thiz.prevPos.y) / 10);
+          thiz.camera.CHANGE_PHI(-(curPos.x - thiz.prevPos.x) / 10);
+          thiz.camera.CHANGE_LAMBDA((curPos.y - thiz.prevPos.y) / 10);
         }
 
         thiz.update();
@@ -462,21 +530,21 @@ class Universe {
       thiz.viewBox.resize();
     }
 
-    window.onerror = function(msg, source, noligne, nocolonne, erreur) {
-      let str = "";
-      str += msg;
-      str += " * ";
-      str += source;
-      str += " * ";
-      str += noligne;
-      str += " * ";
-      str += nocolonne;
-      str += " * ";
-      // str += erreur;
-      // thiz.console(str);
-      thiz.legend.innerText += "\n" + str;
-      print(str);
-    }
+    // window.onerror = function(msg, source, noligne, nocolonne, erreur) {
+    //   let str = "";
+    //   str += msg;
+    //   str += " * ";
+    //   str += source;
+    //   str += " * ";
+    //   str += noligne;
+    //   str += " * ";
+    //   str += nocolonne;
+    //   str += " * ";
+    //   // str += erreur;
+    //   // thiz.console(str);
+    //   thiz.legend.innerText += "\n" + str;
+    //   print(str);
+    // }
   }
 
 }

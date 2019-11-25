@@ -1,0 +1,139 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Overlock', monospace;
+  /* background-color: #ADD8E6; */
+  background-color: #EEEEEE;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+header {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0px;
+  left: 5px;
+  font-size: 80%;
+}
+
+header p {
+  font-size: 100%;
+  font-style: italic;
+  line-height: 10%;
+}
+
+#legend {
+  font-weight: bold;
+  font-size: 110%;
+}
+
+footer {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  font-size: 12px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+a:visited {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+a:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+a:active {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+#container {
+  height: 100%;
+}
+
+#arrows img {
+  width: 60px;
+  position: absolute;
+  cursor: pointer;
+  /* border-radius: 50px; */
+  /* background: rgba(0, 0, 0, 0.2); */
+}
+
+#aleft {
+  top: 50%;
+  left: 0%;
+}
+
+#aright {
+  top: 50%;
+  right: 0;
+}
+
+#aup {
+  top: 2%;
+  right: 30px;
+}
+
+#adown {
+  top: 2%;
+  right: 120px;
+}
+
+svg {
+  height: 100%;
+  width: 100%;
+}
+
+polyline {
+  fill: none;
+  stroke: red;
+  stroke-width: 1;
+}
+
+polygon {
+  /* fill: rgba(0, 0, 0, 0.1); */
+  /* stroke: gray; */
+  stroke-width: 0;
+  /* stroke-linecap: square; */
+}
+
+@media screen and (max-device-width: 600px) {
+  h1 {
+    margin: 0;
+  }
+
+  #arrows img {
+    width: 10%;
+    position: absolute;
+  }
+
+  #aleft {
+    top: 50%;
+    left: 0%;
+  }
+
+  #aright {
+    top: 50%;
+    right: 0%;
+  }
+
+  #aup {
+    top: 2%;
+    right: 5%;
+  }
+
+  #adown {
+    top: 2%;
+    right: 20%;
+  }
+}
