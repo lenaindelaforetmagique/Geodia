@@ -90,7 +90,6 @@ class Camera {
   set_long(alpha) {
     // alpha [0;1] for [-360,+360]
     // coupled with rotate Z
-    console.log(alpha);
     alpha = (360 * 3 * alpha) * DEG_TO_RAD;
     // console.log(alpha);
     let uz2 = this.uz.copy();
@@ -144,7 +143,6 @@ class Camera {
   change_d(intensity = 0) {
     this.d += intensity * 10;
     this.d = Math.max(0.1, this.d);
-    console.log(this.d);
   }
 
 

@@ -38,19 +38,13 @@ function getQueryVariable(variable) {
 
 let polyID = getQueryVariable("polyID");
 if (!polyID) {
-  polyID = 2;
+  polyID = 6;
 } else {
   polyID = parseInt(polyID);
 }
 
-let refinement = getQueryVariable("refinement");
-if (!refinement) {
-  refinement = 5;
-} else {
-  refinement = parseInt(refinement);
-}
 
-let u_ = new Universe(polyID, refinement);
+let u_ = new Universe(polyID);
 
 var updateCB = function(timestamp) {
   u_.refresh(timestamp);

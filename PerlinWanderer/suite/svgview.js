@@ -23,7 +23,7 @@ wait = function(timeMS) {
 }
 
 class Universe {
-  constructor(order_ = 0, refinement_ = 1) {
+  constructor(order_ = 1) {
     this.container = document.getElementById("container");
     this.lb = document.getElementById("aleft");
     this.rb = document.getElementById("aright");
@@ -44,14 +44,14 @@ class Universe {
     this.width = 800;
     this.height = 800;
     this.landscape = new Landscape(this.width, this.height, 5);
-
+    this.remesh = true;
     // console.log(this.camera);
 
     this.nodes = [];
     this.faces = [];
 
     this.order = order_;
-    this.refinement = refinement_;
+    this.refinement = 0.15;
 
     let header = document.getElementById("header");
     let footer = document.getElementById("footer");
@@ -89,6 +89,20 @@ class Universe {
     }
     this.order = this.order % POLY_NAMES.length;
 
+    legend += " - ordre " + this.refinement;
+    this.legend.innerText = legend;
+
+
+
+  }
+
+
+  mesh() {
+    this.domInit();
+    this.nodes = [];
+    this.faces = [];
+
+
     // -- Sol de base --
     let nbre = 2;
     let dx = this.width / (nbre - 1);
@@ -97,7 +111,6 @@ class Universe {
       for (let j = 0; j < nbre; j++) {
         let x = i * dx - this.width / 2;
         let y = j * dy - this.height / 2;
-        let z = this.landscape.altitude(x, y, this.order);
         this.addNode(x, y, 0);
       }
     }
@@ -108,42 +121,49 @@ class Universe {
         this.addTriangle(i * nbre + j, (i + 1) * nbre + j + 1, i * nbre + j + 1, 0);
       }
     }
-    // -- fin sol de base --
 
-    // -- début raffinement --
-    if (this.refinement > 1) {
-      // this.refine(this.refinement);
-    } else {
-      this.refinement = 1;
-    }
-    legend += " - ordre " + this.refinement;
-
+    // -- meshing
+    let tmpFaces = this.faces;
+    let newNodes = [];
+    let newFaces = [];
     let oldLength = this.faces.length;
-    let newLength = 0;
-    // console.log("débutWHile");
-    // while (oldLength != newLength) {
-    //   console.log(oldLength, newLength);
-    //   oldLength = newLength;
-    //   this.refine();
-    //   newLength = this.faces.length;
-    // }
-    // console.log("finWHile");
-    // -- fin raffinement --
+    let newLength = oldLength + 1;
 
+    while (tmpFaces.length > 0) {
+      let angle = tmpFaces[0].apparentAngle();
+      if (angle > this.refinement) {
+        let res = tmpFaces[0].refine(2);
+        tmpFaces = tmpFaces.concat(res[1]);
+        if (angle < this.refinement * 1.5) {
+          tmpFaces[0].alpha = 0.9;
+          newFaces.push(tmpFaces[0]);
+        }
+      } else {
+        newFaces.push(tmpFaces[0]);
+      }
+      tmpFaces.splice(0, 1);
+    }
+    this.faces = newFaces;
 
-    // -- calcul des Z --
-    this.legend.innerText = legend;
+    this.nodes = [];
+    for (let face of this.faces) {
+      for (let node of face.nodes) {
+        if (!this.nodes.includes(node)) {
+          this.nodes.push(node);
+        }
+      }
+    }
+
+    // recal Z + color
     for (let node of this.nodes) {
-      let newZ = this.landscape.altitude(node.position.x, node.position.y, this.order);
-      node.position.z = newZ;
+      node.position.z = this.landscape.altitude(node.position.x, node.position.y, this.order);
     }
 
     for (let face of this.faces) {
-      face.color = this.landscape.colorFunction(face.center());;
+      // let z = face.center();
+      // z = z.z;
+      face.color = this.landscape.colorFunction(face.center());
     }
-    // -- fin calcul des Z --
-
-    this.updateFaces();
   }
 
 
@@ -209,58 +229,13 @@ class Universe {
   }
 
 
-  refine() {
-    let newNodes = [];
-    let newFaces = [];
-    for (let face of this.faces) {
-      // console.log(face.radius(), distance(face.center(), this.camera.position));
-      if (face.radius() / distance(face.center(), this.camera.position) > 1 / 1) {
-        // console.log("oui");
-        let res = face.refine(2);
-        newNodes = newNodes.concat(res[0]);
-        newFaces = newFaces.concat(res[1]);
-      } else {
-        // console.log("non");
-        newNodes = newNodes.concat(face.nodes);
-        newFaces = newFaces.concat([face]);
-      }
-    }
-
-    // console.log(newFaces.length);
-
-    this.nodes = [];
-    for (let newNode of newNodes) {
-      // newNode.position.forceNorm(this.radius);
-      this.nodes.push(newNode);
-      // this.nodesDom.appendChild(newNode.dom);
-      newNode.show();
-    }
-
-
-    this.faces = [];
-    for (let newFace of newFaces) {
-      this.faces.push(newFace);
-      this.facesDom.appendChild(newFace.dom);
-      newFace.show();
-    }
-    // this.updateFaces();
-  }
-
-
   update() {
-    if (this.recal) {
-      this.init();
+    if (this.remesh) {
       let newZ = this.landscape.altitude(this.camera.position.x, this.camera.position.y, this.order);
-      this.camera.position.z = newZ + 25;
-      this.recal = false;
+      this.camera.position.z = newZ + 10;
+      this.mesh();
+      this.remesh = false;
     }
-
-    // this.camera.position
-    // this.camera.update();
-    //
-    // for (let node of this.nodes) {
-    //   node.show();
-    // }
     this.updateFaces();
   }
 
@@ -279,7 +254,6 @@ class Universe {
 
     for (let face of this.faces) {
       if (this.camera.isVisible(face)) {
-        face.color = this.landscape.colorFunction(face.center());;
         this.facesDom.appendChild(face.dom);
         face.show();
       }
@@ -289,12 +263,21 @@ class Universe {
 
   moveLong(intensity = 1) {
     this.camera.moveZ(intensity);
-    this.recal = true;
+    this.remesh = true;
   }
 
   moveLat(intensity = 1) {
     this.camera.moveX(intensity);
-    this.recal = true;
+    this.remesh = true;
+  }
+
+  changeOrder(intensity = 1) {
+    this.order += intensity;
+    this.remesh = true;
+  }
+
+  changeRefinement(intensity = 1) {
+    this.refinement *= Math.pow(2, intensity);;
   }
 
   addEvents() {
@@ -304,20 +287,16 @@ class Universe {
       // console.log(e.key);
       switch (e.key.toUpperCase()) {
         case "ARROWLEFT":
-          thiz.order -= 1;
-          thiz.init();
+          thiz.changeOrder(-1);
           break;
         case "ARROWRIGHT":
-          thiz.order += 1;
-          thiz.init();
+          thiz.changeOrder(1);
           break;
         case "ARROWUP":
-          thiz.refinement += 1;
-          thiz.init();
+          thiz.changeRefinement(1);
           break;
         case "ARROWDOWN":
-          thiz.refinement -= 1;
-          thiz.init();
+          thiz.changeRefinement(-1);
           break;
         case "PAGEUP":
           ALPHA = Math.min(1, ALPHA + 0.05);
@@ -352,11 +331,6 @@ class Universe {
     // MOUSE events
     this.container.addEventListener("mousedown", function(e) {
       e.preventDefault();
-      if (e.ctrlKey) {
-        // thiz.addNode(this,thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
-      } else {
-        // thiz.addPoint(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
-      }
     }, false);
 
     document.addEventListener("mousemove", function(e) {
@@ -381,25 +355,8 @@ class Universe {
         thiz.camera.set_lat(e.clientY / window.innerHeight);
         thiz.camera.set_long(e.clientX / window.innerWidth);
 
-        // thiz.camera.rotate_ux(e.movementY / 2);
-        // thiz.camera.rotate_Z(e.movementX / 2);
-
-
-        // thiz.camera.change_lambda(e.movementY / 10);
-        // thiz.addPoint(thiz.viewBox.realX(e.clientX), thiz.viewBox.realY(e.clientY));
       }
     }, false);
-
-
-    // document.addEventListener("mouseover", function(e) {
-    //
-    //   thiz.camera.rotate_ux(thiz.viewBox.realY(e.clientY));
-    //   thiz.camera.rotate_Z(thiz.viewBox.realX(e.clientX));
-    //   // thiz.camera.rotate_ux(e.movementY / 10);
-    //   // thiz.camera.rotate_Z(e.movementX / 10);
-    //   e.preventDefault();
-    // }, false);
-
 
     document.addEventListener("mouseup", function(e) {
       e.preventDefault();
@@ -417,95 +374,21 @@ class Universe {
 
     // BUTTONs Events
     this.lb.onclick = function() {
-      thiz.order -= 1;
-      thiz.init();
+      thiz.changeOrder(-1);
     };
 
     this.rb.onclick = function() {
-      thiz.order += 1;
-      thiz.init();
+      thiz.changeOrder(1);
     };
 
     this.db.onclick = function() {
-      thiz.refinement -= 1;
-      thiz.init();
+      thiz.changeRefinement(-1);
     };
 
     this.ub.onclick = function() {
-      thiz.refinement += 1;
-      thiz.init();
+      thiz.changeRefinement(1);
     };
 
-    // TOUCH events
-    this.prevX = null;
-    this.prevY = null;
-
-    this.prevPos = null;
-
-    this.getTouchPos = function(e) {
-      let thisX = 0;
-      let thisY = 0;
-      let thisSize = 0;
-
-      for (let touch of e.touches) {
-        thisX += touch.clientX;
-        thisY += touch.clientY;
-
-        for (let other of e.touches) {
-          let l = Math.pow(touch.clientX - other.clientX, 2);
-          l += Math.pow(touch.clientY - other.clientY, 2);
-          thisSize = Math.max(thisSize, l);
-        }
-      }
-
-      thisX /= e.touches.length;
-      thisY /= e.touches.length;
-
-      thisSize = Math.pow(thisSize, 0.5);
-
-      return {
-        x: thisX,
-        y: thisY,
-        size: thisSize
-      };
-    }
-
-    this.container.addEventListener("touchstart", function(e) {
-      e.preventDefault();
-      this.prevPos = thiz.getTouchPos(e);
-    }, false);
-
-    this.container.addEventListener("touchmove", function(e) {
-      e.preventDefault();
-      let curPos = thiz.getTouchPos(e);
-
-      if (thiz.prevPos != null) {
-        if (e.touches.length > 1) {
-          if (thiz.prevPos.size > 0) {
-            // thiz.camera.CHANGE_EXPLODE(-(curPos.x - thiz.prevPos.x + curPos.y - thiz.prevPos.y));
-          }
-        } else {
-          thiz.camera.CHANGE_PHI(-(curPos.x - thiz.prevPos.x) / 10);
-          thiz.camera.CHANGE_LAMBDA((curPos.y - thiz.prevPos.y) / 10);
-        }
-
-        thiz.update();
-      }
-      thiz.prevPos = curPos;
-    }, false);
-
-    this.container.addEventListener("touchend", function(e) {
-      e.preventDefault();
-      thiz.prevPos = null;
-    }, false);
-
-    this.container.addEventListener("touchcancel", function(e) {
-      e.preventDefault();
-    }, false);
-
-    this.container.addEventListener("touchleave", function(e) {
-      e.preventDefault();
-    }, false);
 
     // OTHER events
     window.onresize = function(e) {

@@ -57,6 +57,7 @@ class Polygon {
     this.parent = parent_;
     this.nodes = nodesList_;
     this.color = 0;
+    this.alpha = 1;
 
     this.dom = document.createElementNS(SVGNS, 'polygon');
     // this.dom.setAttribute('fill', this.color);
@@ -84,8 +85,8 @@ class Polygon {
     let color_SL = this.parent.raytracing.light(this.center(), this.normalVector());
     // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
     // this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
-    this.dom.setAttribute('fill', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
-    this.dom.setAttribute('stroke', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
+    this.dom.setAttribute('fill', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, this.alpha));
+    this.dom.setAttribute('stroke', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, this.alpha));
   }
 
   radius() {
@@ -99,6 +100,15 @@ class Polygon {
     res = v1.crossProduct(v2);
     res = res.norm() / 2;
     res = Math.sqrt(res);
+    return res;
+  }
+
+  apparentAngle() {
+    // console.log(this.parent.camera.position);
+    let cam = this.parent.camera.position.copy();
+    cam.z = 15;
+    let res = this.radius() / distance(this.center(), cam);
+    res = Math.min(res, 0.35);
     return res;
   }
 

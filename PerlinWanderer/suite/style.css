@@ -4,9 +4,15 @@ html, body {
   height: 100%;
   overflow: hidden;
   font-family: 'Overlock', monospace;
-  /* background-color: #ADD8E6; */
-  background-color: #EEEEEE;
+  /* background-color: #000080; */
+  /* background-color: #888888; */
+  /* EEEEEE; */
   color: rgba(0, 0, 0, 0.7);
+}
+
+html {
+  background-image: linear-gradient(to bottom, #CCEEFF, #FFDDDD);
+  background-attachment: fixed;
 }
 
 header {

@@ -13,25 +13,30 @@ class Landscape {
       this.factors.push((Math.random() + 1) / 2 * 1 / Math.pow(2, i));
       this.noises.push(new PerlinNoise(-this.width / 1.5, this.width / 1.5, Math.pow(2, i + 2), -this.height / 1.5, this.height / 1.5, Math.pow(2, i + 2)));
     }
+
+    // console.log(this.factors);
   }
 
   altitude(x, y, order) {
+    // console.log("lkjlkj", order);
     let z = 0;
-    for (let k = 0; k < Math.min(order, this.maxOrder); k++) {
+    for (let k = 0; k < Math.min(order, this.order); k++) {
       z += this.noises[k].noise(x, y) * this.factors[k];
     }
-
+    // console.log();
+    // console.log(this.noises[0]);
     return Math.max(300 * z, -50);
   }
 
-  colorFunction(z) {
+  colorFunction(position) {
     let color = 0;
-
-    if (z < -49) {
-      color = 180 + Math.random() * 10;
+    let lastNoise = this.noises.last();
+    if (position.z < -49.9) {
+      color = 180 + lastNoise.noise(position.x, position.y) * 10;
     } else {
-      color = 65 + (10 - 100) / 300 * z + Math.random() * 20;
+      color = 65 + (10 - 100) / 300 * position.z + lastNoise.noise(position.x, position.y) * 20;
     }
+    // console.log(color);
     return color;
   }
 
