@@ -52,7 +52,6 @@ class Edge {
 class Polygon {
   constructor(nodesList_) {
     this.nodes = nodesList_;
-    this.color = 0;
 
     this.dom = document.createElementNS(SVGNS, 'polygon');
     // this.dom.setAttribute('fill', this.color);
@@ -71,7 +70,7 @@ class Polygon {
     let b = this.nodes[0].position.copy();
     b.add(a)
     let pos0 = PROJ_FUNCTION(b);
-    // list += `${pos0[0]}, ${pos0[1]}`
+    list += `${pos0[0]}, ${pos0[1]}`
 
     this.dom.setAttributeNS(null, "points", list);
 
@@ -81,10 +80,9 @@ class Polygon {
     let center = this.center();
 
     let color_SL = RAYTRACING_LIGHT(this.center(), this.normalVector());
-    // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
-    // this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
-    this.dom.setAttribute('fill', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
-    this.dom.setAttribute('stroke', colorGeneratorHSLA(this.color, color_SL[0] * 100, color_SL[1] * 40 / 3 + 30, ALPHA));
+    // this.dom.setAttribute('fill', colorGeneratorRGBA(color, 0 * color, 0 * color, 1));
+    // this.dom.setAttribute('fill', colorGeneratorHSLA(0, 100 + color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, 0.4));
+    this.dom.setAttribute('fill', colorGeneratorHSLA(0, color_SL[0] * 0 + 0, (color_SL[0] * 2 + color_SL[1]) * 40 / 3 + 60, ALPHA));
   }
 
   center() {
@@ -107,11 +105,11 @@ class Polygon {
     res = v1.crossProduct(v2);
     res.normalize();
     // sign
-    // let v3 = new Vector3D(0, 0, 0);
-    // v3.sub(this.center());
-    // if (res.dotProduct(v3) > 0) {
-    // res.mult(-1);
-    // }
+    let v3 = new Vector3D(0, 0, 0);
+    v3.sub(this.center());
+    if (res.dotProduct(v3) > 0) {
+      res.mult(-1);
+    }
     return res;
 
   }
@@ -120,11 +118,6 @@ class Polygon {
     let res = PROJ_FUNCTION(this.center())[2];
     res -= PROJ_FUNCTION(other.center())[2];
     return res;
-  }
-
-
-  isVisible() {
-    return (PROJ_FUNCTION(this.center())[2] < PROJ_RR);
   }
 
 }
@@ -166,7 +159,7 @@ class Triangle extends Polygon {
     let id = 0
     for (let i = 0; i <= n - 1; i++) {
       for (let j = 0; j < n - i; j++) {
-        let newFace = new Triangle(newNodes[id], newNodes[id + n + 1 - i], newNodes[id + 1]);
+        let newFace = new Triangle(newNodes[id], newNodes[id + 1], newNodes[id + n + 1 - i]);
         newFaces.push(newFace);
         id += 1;
       }
@@ -175,7 +168,7 @@ class Triangle extends Polygon {
     id = 0;
     for (let i = 0; i <= n - 2; i++) {
       for (let j = 0; j < n - i - 1; j++) {
-        let newFace = new Triangle(newNodes[id + 1], newNodes[id + n + 1 - i], newNodes[id + n + 2 - i]);
+        let newFace = new Triangle(newNodes[id + 1], newNodes[id + n + 2 - i], newNodes[id + n + 1 - i]);
         newFaces.push(newFace);
         id += 1;
       }
@@ -230,9 +223,9 @@ class Quadrangle extends Polygon {
       for (let j = 0; j <= n - 1; j++) {
         let newFace = new Quadrangle(
           newNodes[i * (n + 1) + j],
-          newNodes[(i + 1) * (n + 1) + j],
+          newNodes[i * (n + 1) + j + 1],
           newNodes[(i + 1) * (n + 1) + (j + 1)],
-          newNodes[i * (n + 1) + j + 1]
+          newNodes[(i + 1) * (n + 1) + j]
         );
         newFaces.push(newFace);
       }
@@ -374,10 +367,10 @@ class Quintangle extends Polygon {
         let max = newNodes.length;
         newFace = new Quintangle(
           newNodes[max - 1],
-          newNodes[max - 5],
-          newNodes[max - 4],
+          newNodes[max - 2],
           newNodes[max - 3],
-          newNodes[max - 2]
+          newNodes[max - 4],
+          newNodes[max - 5]
         );
         newFaces.push(newFace);
       }
@@ -396,5 +389,3 @@ class Quintangle extends Polygon {
 EVAL_DISTANCE = function(polygon1, polygon2) {
   return polygon1.isBefore(polygon2);
 }
-
-print("geom.js ok");

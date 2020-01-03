@@ -83,7 +83,7 @@ class Universe {
     let drawPolyedre = POLY_FUNCTIONS[this.polyID];
 
     drawPolyedre(this);
-
+    this.updateFaces();
     legend = POLY_NAMES[this.polyID];
 
     if (this.refinement > 1) {
@@ -92,21 +92,8 @@ class Universe {
       this.refinement = 1;
     }
     legend += " - ordre " + this.refinement;
+
     this.legend.innerText = legend;
-
-
-    for (let node of this.nodes) {
-      let newZ = altitude(node.position.x, node.position.y, this.polyID);
-      node.position.z = newZ;
-    }
-
-    for (let face of this.faces) {
-      let alt = face.center().z;
-      let newColor = colorFunction(face);
-      face.color = newColor;
-    }
-
-    this.updateFaces();
   }
 
   addNode(x_ = 0, y_ = 0, z_ = 0) {
@@ -173,7 +160,7 @@ class Universe {
     }
 
     for (let newNode of newNodes) {
-      // newNode.position.forceNorm(this.radius);
+      newNode.position.forceNorm(this.radius);
       this.nodes.push(newNode);
       this.nodesDom.appendChild(newNode.dom);
       newNode.show();
@@ -190,22 +177,13 @@ class Universe {
 
 
   updateFaces() {
-
-    let camPos = EVAL_DISTANCE = function(polygon1, polygon2) {
-      return polygon1.isBefore(polygon2);
-    }
-
-
     this.faces.sort(EVAL_DISTANCE);
     while (this.facesDom.firstChild != null) {
       this.facesDom.removeChild(this.facesDom.firstChild);
     }
-
     for (let face of this.faces) {
-      // if (face.isVisible()) {
       this.facesDom.appendChild(face.dom);
       face.show();
-      // }
     }
 
   }
@@ -462,21 +440,19 @@ class Universe {
       thiz.viewBox.resize();
     }
 
-    window.onerror = function(msg, source, noligne, nocolonne, erreur) {
-      let str = "";
-      str += msg;
-      str += " * ";
-      str += source;
-      str += " * ";
-      str += noligne;
-      str += " * ";
-      str += nocolonne;
-      str += " * ";
-      // str += erreur;
-      // thiz.console(str);
-      thiz.legend.innerText += "\n" + str;
-      print(str);
-    }
+    // window.onerror = function(msg, source, noligne, nocolonne, erreur) {
+    //   let str = "";
+    //   str += msg;
+    //   str += " * ";
+    //   str += source;
+    //   str += " * ";
+    //   str += noligne;
+    //   str += " * ";
+    //   str += nocolonne;
+    //   str += " * ";
+    //   // str += erreur;
+    //   thiz.console(str);
+    // }
   }
 
 }
@@ -539,4 +515,3 @@ class ViewBox {
 
 
 }
-print("svgview.js ok");

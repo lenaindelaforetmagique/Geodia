@@ -8,13 +8,13 @@
 
   <!-- meta tags -->
   <meta name="author" content="Xavier Morin">
-  <meta name="description" content="Sol de Perlin">
+  <meta name="description" content="A *.obj file viewer">
   <meta name="keywords" content="obj, 3D, polygon">
 
   <!-- Open Graph protocol : http://ogp.me/ -->
-  <meta property="og:title" content="Sol de Perlin">
+  <meta property="og:title" content="Obj viewer">
   <meta property="og:type" content="website">
-  <meta property="og:description" content="A perlin noisy ground generator">
+  <meta property="og:description" content="An *.obj files viewer">
   <meta property="og:url" content="https://lenaindelaforetmagique.github.io/Geodia/obj">
   <meta property="og:image" content="http://lenaindelaforetmagique.github.io/Geodia/obj/screenshot.png">
 
@@ -26,10 +26,9 @@
 
 <body>
   <header id="header">
-    <!-- <h1>Obj files viewer (low poly preferred)</h1> -->
-    <h1>Sol de Perlin</h1>
+    <h1>Obj files viewer (low poly preferred)</h1>
     <div id="legend">Certaines fonctionnalités de ce site ne sont pas prises en compte par votre navigateur, essayez-en un meilleur : Firefox, Chrome par exemple...</div>
-    <div id="console"></div>
+
   </header>
   <div id="container"></div>
   <div id="arrows">
@@ -43,14 +42,12 @@
       <a href="https://lenaindelaforetmagique.github.io/" target="_blank"> Copyright (c) 2019 Xavier Morin</a>
     </p>
   </footer>
-  <script src="consoleLike.js"></script>
   <script src="perlinNoise.js"></script>
-  <script src="../vector3D.js"></script>
-  <script src="../polyedres.js"></script>
-  <script src="landscape.js"></script>
+  <script src="vector3D.js"></script>
+  <script src="lowPoly.js"></script>
   <script src="geom.js"></script>
-  <script src="../projectionFunction.js"></script>
-  <script src="../raytracing.js"></script>
+  <script src="projectionFunction.js"></script>
+  <script src="raytracing.js"></script>
   <script src="svgview.js"></script>
   <script src="script.js"></script>
 </body>
